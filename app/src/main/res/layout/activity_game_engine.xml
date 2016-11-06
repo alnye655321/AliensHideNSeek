@@ -19,4 +19,10 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:hint="@string/playercount_message"/>
+
+    <Button
+        android:id="@+id/btnJsonObj"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_json_obj_request" />
 </LinearLayout>
