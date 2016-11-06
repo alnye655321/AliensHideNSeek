@@ -84,16 +84,12 @@ public class GameEngineActivity extends Activity implements OnClickListener {
 
         String url = "http://node.nyedigital.com/game";
 
-        Map<String, String> params = new HashMap();// object values
+        Map<String, String> params = new HashMap();// object payload values
         params.put("name", gameMessage);
         params.put("handle", handleMessage);
         params.put("tagline", taglineMessage);
 
-        JSONObject parameters = new JSONObject(params);
-
-        //ProgressDialog pDialog = new ProgressDialog(this);
-        //pDialog.setMessage("Loading...");
-        //pDialog.show();
+        JSONObject parameters = new JSONObject(params);//create object payload
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 url, parameters,
@@ -102,30 +98,25 @@ public class GameEngineActivity extends Activity implements OnClickListener {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, response.toString());
-                        //pDialog.hide();
                     }
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                //pDialog.hide();
             }
         }) {
 
 //            @Override
 //            protected Map<String, String> getParams() {
 //                Map<String, String> params = new HashMap<String, String>();
-//                params.put("name", "Androidhive");
-//                //params.put("email", "abc@androidhive.info");
-//                //params.put("password", "password123");
-//
+//                params.put("name", "Android");
+
 //                return params;
 //            }
-
         };
 
-// Adding request to request queue
+// Add req to queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
     }
 
