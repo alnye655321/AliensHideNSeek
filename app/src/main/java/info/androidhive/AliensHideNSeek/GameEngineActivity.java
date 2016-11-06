@@ -68,6 +68,7 @@ public class GameEngineActivity extends Activity implements OnClickListener {
         layout.addView(textView);
         layout.addView(textView1);
         layout.addView(textView2);
+        makeJsonObjReq();
     }
 
     /**
@@ -75,16 +76,27 @@ public class GameEngineActivity extends Activity implements OnClickListener {
      * */
     private void makeJsonObjReq() {
 // Tag used to cancel the request
+        Intent intent = getIntent();
+        String gameMessage = intent.getStringExtra(CreateGameActivity.GAME_MESSAGE);
+        String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
+        String taglineMessage = intent.getStringExtra(CreateGameActivity.TAGLINE_MESSAGE);
         String tag_json_obj = "json_obj_req";
 
         String url = "http://node.nyedigital.com/game";
+
+        Map<String, String> params = new HashMap();// object values
+        params.put("name", gameMessage);
+        params.put("handle", handleMessage);
+        params.put("tagline", taglineMessage);
+
+        JSONObject parameters = new JSONObject(params);
 
         //ProgressDialog pDialog = new ProgressDialog(this);
         //pDialog.setMessage("Loading...");
         //pDialog.show();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, null,
+                url, parameters,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -101,15 +113,15 @@ public class GameEngineActivity extends Activity implements OnClickListener {
             }
         }) {
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("name", "Androidhive");
-                //params.put("email", "abc@androidhive.info");
-                //params.put("password", "password123");
-
-                return params;
-            }
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("name", "Androidhive");
+//                //params.put("email", "abc@androidhive.info");
+//                //params.put("password", "password123");
+//
+//                return params;
+//            }
 
         };
 
