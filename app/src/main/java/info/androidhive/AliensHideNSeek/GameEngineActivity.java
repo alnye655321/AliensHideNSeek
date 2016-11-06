@@ -71,9 +71,7 @@ public class GameEngineActivity extends Activity implements OnClickListener {
         makeJsonObjReq();
     }
 
-    /**
-     * Making json object request
-     * */
+     //JSON POST Req - Create New Game with Host Plyaer
     private void makeJsonObjReq() {
 // Tag used to cancel the request
         Intent intent = getIntent();
@@ -118,7 +116,7 @@ public class GameEngineActivity extends Activity implements OnClickListener {
 
 // Add req to queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
-    }
+    } //JSON POST Req - Create New Game with Host Plyaer
 
 
     public void onClick(View v) {
