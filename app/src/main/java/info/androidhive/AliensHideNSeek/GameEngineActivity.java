@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +42,9 @@ import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     Human player1 = new Human("Military",1,"Colonel Hicks","Kickass",0,0);
+    public Handler handler;
+    public ProgressBar progressBar;
+    public double lat;
 //location settings---------------------------------------------------------------------------------
 //protected static final String TAG = "location-updates-sample";
 
@@ -116,7 +120,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
         //btnJsonObj = (Button) findViewById(R.id.btnJsonObj);
         //btnJsonObj.setOnClickListener(this);
-
+        handler = new Handler(); //for new thread
+        progressBar = (ProgressBar) findViewById(R.id.progressBar1); //for new thread
 
         Intent intent = getIntent();
 
@@ -166,6 +171,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         buildGoogleApiClient();
         //close location settings------------------------------------------------------------------
     } //close on create
+
+    //new test thread start
+    public void startProgress(View view) {
+        new Thread(new Engine()).start();
+    }
+    //close new test thread
 
     //location methods------------------------------------------------------------------------------
     /**
@@ -489,4 +500,28 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         super.onSaveInstanceState(savedInstanceState);
     }
 
-}//close class
+
+    class Engine implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i <= 20; i++) {
+                final int value = i;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setProgress(value);
+                        lat = mCurrentLocation.getLatitude();
+
+                        Log.d(TAG, Double.toString(lat));
+                    }
+                });
+            }
+        }
+    }
+
+}//close game engine class
