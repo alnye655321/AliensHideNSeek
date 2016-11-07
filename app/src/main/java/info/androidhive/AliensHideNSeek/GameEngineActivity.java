@@ -44,8 +44,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     Human player1 = new Human("Military",1,"Colonel Hicks","Kickass",0,0,0,0);
     private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
     public Handler handler;
-    public ProgressBar progressBar;
-    public double lat;
+    public ProgressBar progressBar; //no longer using from thread example
+    public double lat; //local gps update variables, used in game engine thread
+    public double lon;
 //location settings---------------------------------------------------------------------------------
 //protected static final String TAG = "location-updates-sample";
 
@@ -508,7 +509,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
             while (gameActive) {
                 //final int value = i;
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(2000); //delay in ms
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -517,9 +518,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                     public void run() {
                         //progressBar.setProgress(value);
                         lat = mCurrentLocation.getLatitude();
+                        lon = mCurrentLocation.getLongitude();
                         player1.setLat(lat);
+                        player1.setLon(lon);
                         //Log.d(TAG, Double.toString(lat));
                         Log.d(TAG, Double.toString(player1.getLat()));
+                        Log.d(TAG, Double.toString(player1.getLon()));
                     }
                 });
             }
