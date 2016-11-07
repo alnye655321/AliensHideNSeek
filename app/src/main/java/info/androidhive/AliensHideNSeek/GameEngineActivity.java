@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -39,7 +40,7 @@ import info.androidhive.AliensHideNSeek.app.AppController;
 import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-
+    Human player1 = new Human("Military",1,"Colonel Hicks","Kickass",0,0);
 //location settings---------------------------------------------------------------------------------
 //protected static final String TAG = "location-updates-sample";
 
@@ -274,6 +275,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
+
     }
 
     /**
@@ -301,6 +303,11 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 mCurrentLocation.getLongitude()));
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
+
+        String playaName = player1.getName();
+        Log.i(TAG, playaName);
+        //Log.i(TAG, "Handler Update Init");
+
     }
 
     /**
@@ -377,10 +384,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+
     }
 
     @Override
