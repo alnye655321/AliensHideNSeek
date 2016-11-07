@@ -42,6 +42,7 @@ import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     Human player1 = new Human("Military",1,"Colonel Hicks","Kickass",0,0,0,0);
+    private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
     public Handler handler;
     public ProgressBar progressBar;
     public double lat;
@@ -504,17 +505,17 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     class Engine implements Runnable {
         @Override
         public void run() {
-            for (int i = 0; i <= 20; i++) {
-                final int value = i;
+            while (gameActive) {
+                //final int value = i;
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setProgress(value);
+                        //progressBar.setProgress(value);
                         lat = mCurrentLocation.getLatitude();
                         player1.setLat(lat);
                         //Log.d(TAG, Double.toString(lat));
