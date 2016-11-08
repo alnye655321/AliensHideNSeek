@@ -44,7 +44,8 @@ import info.androidhive.AliensHideNSeek.app.AppController;
 import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-    Human player1 = new Human("Military",1,"Colonel Hicks","Kickass",0,0,0,0);
+    Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
+    Environment game1 = new Environment("Default",300000,8); // 300000ms = 5mins !!! 8 = max players --> should be user set
     private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
     public Handler handler;
     public ProgressBar progressBar; //no longer using from thread example
@@ -151,7 +152,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         layout.addView(textView);
         layout.addView(textView1);
         layout.addView(textView2);
-        makeJsonObjReq();
+        createNewGame();
 
         //location settings------------------------------------------------------------------------
         // Locate the UI widgets.
@@ -342,9 +343,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     //end location methods--------------------------------------------------------------------------
 
      //JSON POST Req - Create New Game with Host Player---------run in onCreate()-------------------
-    private void makeJsonObjReq() {
+    private void createNewGame() {
 // Tag used to cancel the request
-        Intent intent = getIntent();
+        Intent intent = getIntent(); //get host submitted values from previous activity --> CreateGameActivity
         String gameMessage = intent.getStringExtra(CreateGameActivity.GAME_MESSAGE);
         String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
         String taglineMessage = intent.getStringExtra(CreateGameActivity.TAGLINE_MESSAGE);
@@ -372,6 +373,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             //TAGINT
                             Log.d("MYINT", "value: " + gameId);
                             Log.d("MYINT", "value: " + playerId);
+                            player1.setGameId(gameId); //define player properties from server response
+                            player1.setPlayerId(playerId);
+                            game1.setGameId(gameId); //assign value to gameId on initial server response
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -473,8 +477,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         Log.d(TAG, response.toString());
 
                         try {
-                            // Parsing json array response
-                            // loop through each json object
+                            // Iterate json array response - loop through each json object
                             String jsonResponse = "";
                             for (int i = 0; i < response.length(); i++) {
 
@@ -503,7 +506,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
                             }
                             Log.d(TAG, jsonResponse);
-                            //txtResponse.setText(jsonResponse);
+                            //game1.gameWinnerCheck();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -529,7 +532,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     public void onClick(View v) { //for json obj buttons
         switch (v.getId()) {
             case R.id.btnJsonObj:
-                makeJsonObjReq();
+                createNewGame();
                 break;
             case R.id.btnJsonArray:
                 //makeJsonArryReq();

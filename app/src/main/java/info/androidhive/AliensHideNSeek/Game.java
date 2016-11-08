@@ -8,18 +8,15 @@ public class Game {
 
     //Instant startTimeFlag;
     //Instant currentTimeFlag;
-    public int id;
-    public Boolean active = true;
-    public String name;
-    public int players;
-    public int timeLimit;
+    private int id;
+    private Boolean active = true;
+    private int players;
+    private int timeLimit;
 
 
     // game state constructor
-    Game(int id, int timeLimit, String name, int players) {
-        this.id = id;
+    Game(int timeLimit, int players) {
         this.timeLimit = timeLimit;
-        this.name = name;
         this.players = players;
         //this.startTimeFlag = Instant.now();
     }
@@ -36,6 +33,14 @@ public class Game {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public int getGameId() {
+        return this.id;
+    }
+
+    public void setGameId(int id) {
+        this.id = id;
     }
 
 }

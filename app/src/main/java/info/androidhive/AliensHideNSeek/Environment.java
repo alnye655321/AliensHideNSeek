@@ -11,8 +11,8 @@ public class Environment extends Game {
 
 
     // environment constructor
-    Environment(String type, int id, int timeLimit, String name, int players) {
-        super(id, timeLimit, name, players);
+    Environment(String type, int timeLimit, int players) {
+        super(timeLimit, players);
         this.type = type;
     }
 
