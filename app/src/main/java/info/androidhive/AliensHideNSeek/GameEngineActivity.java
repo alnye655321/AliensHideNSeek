@@ -397,7 +397,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         params.put("id", "3");
         params.put("lat", lat);
         params.put("lon", lon);
-        params.put("checkStart", "true");
+        params.put("checkStart", player1.getCheckStart());
         params.put("gameId", "2");
 
         JSONObject parameters = new JSONObject(params);//create object payload
@@ -414,10 +414,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         try {
                             // Parsing json object response
                             // response will be a json object
-                            String startStatus = response.getString("startStatus");
+                            String startStatus = response.getString("startStatus"); //set response values
                             String updateStatus = response.getString("updateStatus");
                             Log.d(TAG, startStatus);
                             Log.d(TAG, updateStatus);
+                            if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
+                                player1.setCheckStart("false");
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -579,10 +582,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         lon = mCurrentLocation.getLongitude();
                         player1.setLat(lat);
                         player1.setLon(lon);
+                        String latString = Double.toString(player1.getLat());
+                        String lonString = Double.toString(player1.getLon());
+                        Log.d(TAG, latString); Log.d(TAG, lonString);
                         //Log.d(TAG, Double.toString(lat));
                         //Log.d(TAG, Double.toString(player1.getLat()));
                         //Log.d(TAG, Double.toString(player1.getLon()));
-                        updateReq(Double.toString(player1.getLat()), Double.toString(player1.getLon()) );
+                        updateReq(latString, lonString);
                     }
                 });
             }

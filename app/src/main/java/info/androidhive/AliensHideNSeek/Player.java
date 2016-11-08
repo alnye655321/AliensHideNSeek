@@ -8,7 +8,7 @@ public class Player {
     private double playerStartLon;
     private double lat;
     private double lon;
-    private boolean checkStart;
+    private String checkStart;
 
     // player constructor
     Player(int id, String name, String tagline, double playerStartLat, double playerStartLon, double lat, double lon ) {
@@ -19,7 +19,7 @@ public class Player {
         this.playerStartLon = playerStartLon;
         this.lat = lat;
         this.lon = lon;
-        this.checkStart = true;
+        this.checkStart = "true";
     }
 
     public String getName() {
@@ -48,6 +48,14 @@ public class Player {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public void setCheckStart(String val) {
+        this.checkStart = val;
+    }
+
+    public String getCheckStart() {
+        return this.checkStart;
     }
 
 
