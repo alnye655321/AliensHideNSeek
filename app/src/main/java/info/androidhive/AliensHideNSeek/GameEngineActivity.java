@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -39,7 +42,12 @@ import info.androidhive.AliensHideNSeek.app.AppController;
 import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-
+    Human player1 = new Human("Military",1,"Colonel Hicks","Kickass",0,0,0,0);
+    private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
+    public Handler handler;
+    public ProgressBar progressBar; //no longer using from thread example
+    public double lat; //local gps update variables, used in game engine thread
+    public double lon;
 //location settings---------------------------------------------------------------------------------
 //protected static final String TAG = "location-updates-sample";
 
@@ -115,7 +123,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
         //btnJsonObj = (Button) findViewById(R.id.btnJsonObj);
         //btnJsonObj.setOnClickListener(this);
-
+        handler = new Handler(); //for new thread
+        progressBar = (ProgressBar) findViewById(R.id.progressBar1); //for new thread
 
         Intent intent = getIntent();
 
@@ -165,6 +174,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         buildGoogleApiClient();
         //close location settings------------------------------------------------------------------
     } //close on create
+
+    //new test thread start
+    public void startProgress(View view) {
+        new Thread(new Engine()).start();
+    }
+    //close new test thread
 
     //location methods------------------------------------------------------------------------------
     /**
@@ -274,6 +289,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
+
     }
 
     /**
@@ -301,6 +317,11 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 mCurrentLocation.getLongitude()));
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
+
+        String playaName = player1.getName();
+        Log.i(TAG, playaName);
+        //Log.i(TAG, "Handler Update Init");
+
     }
 
     /**
@@ -317,7 +338,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     }
     //end location methods--------------------------------------------------------------------------
 
-     //JSON POST Req - Create New Game with Host Player
+     //JSON POST Req - Create New Game with Host Player---------------------------------------------
     private void makeJsonObjReq() {
 // Tag used to cancel the request
         Intent intent = getIntent();
@@ -362,7 +383,69 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
 // Add req to queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
-    } //JSON POST Req - Create New Game with Host Plyaer
+    } //JSON POST Req - Create New Game with Host Player--------------------------------------------
+
+    //JSON POST Req - Continuous Update-------------------------------------------------------------
+    private void updateReq(String lat, String lon) {
+// Tag used to cancel the request
+
+        String tag_json_obj = "update_json_obj_req";
+
+        String url = "http://node.nyedigital.com/update/human";
+
+        Map<String, String> params = new HashMap();// object payload values
+        params.put("id", "3");
+        params.put("lat", lat);
+        params.put("lon", lon);
+        params.put("checkStart", player1.getCheckStart());
+        params.put("gameId", "2");
+
+        JSONObject parameters = new JSONObject(params);//create object payload
+
+        JsonObjectRequest updateObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Log.d(TAG, response.toString());
+                        Log.d(TAG, response.toString());
+
+                        try {
+                            // Parsing json object response
+                            // response will be a json object
+                            String startStatus = response.getString("startStatus"); //set response values
+                            String updateStatus = response.getString("updateStatus");
+                            Log.d(TAG, startStatus);
+                            Log.d(TAG, updateStatus);
+                            if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
+                                player1.setCheckStart("false");
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+            }
+        }) {
+
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("name", "Android");
+
+//                return params;
+//            }
+        };
+
+// Add req to queue
+        AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
+    } //JSON POST Req - Continuous Update-----------------------------------------------------------
 
 
     public void onClick(View v) { //for json obj buttons
@@ -377,10 +460,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+
     }
 
     @Override
@@ -480,4 +565,34 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         super.onSaveInstanceState(savedInstanceState);
     }
 
-}//close class
+
+    class Engine implements Runnable {
+        @Override
+        public void run() {
+            while (gameActive) {
+                try {
+                    Thread.sleep(3000); //delay in ms
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        lat = mCurrentLocation.getLatitude();
+                        lon = mCurrentLocation.getLongitude();
+                        player1.setLat(lat);
+                        player1.setLon(lon);
+                        String latString = Double.toString(player1.getLat());
+                        String lonString = Double.toString(player1.getLon());
+                        Log.d(TAG, latString); Log.d(TAG, lonString);
+                        //Log.d(TAG, Double.toString(lat));
+                        //Log.d(TAG, Double.toString(player1.getLat()));
+                        //Log.d(TAG, Double.toString(player1.getLon()));
+                        updateReq(latString, lonString);
+                    }
+                });
+            }
+        }
+    }
+
+}//close game engine class
