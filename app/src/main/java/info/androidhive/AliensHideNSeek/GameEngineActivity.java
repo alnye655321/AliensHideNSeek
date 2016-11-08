@@ -111,6 +111,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     //private String TAG = JsonRequestActivity.class.getSimpleName();
     private String TAG = "tagger";
+    private int TAGINT = 1;
     private Button btnJsonObj;
     private TextView msgResponse;
     //private ProgressDialog pDialog;
@@ -364,7 +365,16 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, response.toString());
+                        //Log.d(TAG, response.toString());
+                        try {
+                            int gameId = response.getInt("gameId");
+                            int playerId = response.getInt("playerId");
+                            //TAGINT
+                            Log.d("MYINT", "value: " + gameId);
+                            Log.d("MYINT", "value: " + playerId);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
 
