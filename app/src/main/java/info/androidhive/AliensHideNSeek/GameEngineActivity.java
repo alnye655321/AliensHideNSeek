@@ -29,7 +29,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -338,7 +340,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     }
     //end location methods--------------------------------------------------------------------------
 
-     //JSON POST Req - Create New Game with Host Player---------------------------------------------
+     //JSON POST Req - Create New Game with Host Player---------run in onCreate()-------------------
     private void makeJsonObjReq() {
 // Tag used to cancel the request
         Intent intent = getIntent();
@@ -447,6 +449,72 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
     } //JSON POST Req - Continuous Update-----------------------------------------------------------
 
+    //alien enemy location call continuous update---------------------------------------------------
+    //create array beforehand - set for
+    private void alienArrayRequest(int gameId) {
+
+        String urlJsonArry = "http://node.nyedigital.com/aliens/" + gameId;
+
+
+        JsonArrayRequest alienReq = new JsonArrayRequest(urlJsonArry,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        try {
+                            // Parsing json array response
+                            // loop through each json object
+                            String jsonResponse = "";
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject alien = (JSONObject) response
+                                        .get(i);
+
+                                int idRes = alien.getInt("id");
+                                String handleRes = alien.getString("handle");
+                                String taglineRes = alien.getString("tagline");
+                                boolean humanRes = alien.getBoolean("human");
+                                double latRes = alien.getDouble("lat");
+                                double lonRes = alien.getDouble("lon");
+                                double latStartRes = alien.getDouble("latstart");
+                                double lonStartRes = alien.getDouble("lonstart");
+                                int  gameIdRes = alien.getInt("game_id");
+
+                                jsonResponse += "idRes: " + idRes + "\n\n";
+                                jsonResponse += "handleRes: " + handleRes + "\n\n";
+                                jsonResponse += "taglineRes: " + taglineRes + "\n\n";
+                                jsonResponse += "humanRes: " + humanRes + "\n\n\n";
+                                jsonResponse += "latRes: " + latRes + "\n\n\n";
+                                jsonResponse += "lonRes: " + lonRes + "\n\n\n";
+                                jsonResponse += "latStartRes: " + latStartRes + "\n\n\n";
+                                jsonResponse += "lonStartRes: " + lonStartRes + "\n\n\n";
+                                jsonResponse += "gameIdRes: " + gameIdRes + "\n\n\n";
+
+                            }
+                            Log.d(TAG, jsonResponse);
+                            //txtResponse.setText(jsonResponse);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),
+                                    "Error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(alienReq);
+    }
+    //alien enemy location call continuous update--------------------------------------------------
 
     public void onClick(View v) { //for json obj buttons
         switch (v.getId()) {
@@ -589,6 +657,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         //Log.d(TAG, Double.toString(player1.getLat()));
                         //Log.d(TAG, Double.toString(player1.getLon()));
                         updateReq(latString, lonString);
+                        alienArrayRequest(2);// !!! pass in real gameID here !!!
                     }
                 });
             }
