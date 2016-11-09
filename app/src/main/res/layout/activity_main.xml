@@ -10,20 +10,28 @@
     tools:context=".MainActivity" >
 
     <EditText android:id="@+id/handle"
-        android:layout_width="wrap_content"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/handle_message"/>
+
     <EditText android:id="@+id/tagline"
-        android:layout_width="wrap_content"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/tagline_message"/>
+
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="@string/create_game"
         android:onClick="createGame"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/join_game"
+        android:onClick="joinGame"/>
 
     <Button android:id="@+id/btnStringRequest"
         android:layout_width="fill_parent"
@@ -36,11 +44,5 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="@string/btn_json" />
-
-    <Button android:id="@+id/btnImageRequest"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="@string/btn_image" />
 
 </LinearLayout>

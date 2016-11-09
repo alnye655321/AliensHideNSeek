@@ -39,7 +39,7 @@ public class CreateGameActivity extends Activity {
         layout.addView(textView);
         layout.addView(textView1);
 
-    }
+    }// close onCreate()
 
     public void createGame(View view){
         //Log.d(TAG, EXTRA_MESSAGE);

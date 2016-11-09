@@ -22,17 +22,26 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		btnString = (Button) findViewById(R.id.btnStringRequest);
 		btnJson = (Button) findViewById(R.id.btnJsonRequest);
-		btnImage = (Button) findViewById(R.id.btnImageRequest);
 
 		// button click listeners
 		btnString.setOnClickListener(this);
 		btnJson.setOnClickListener(this);
-		btnImage.setOnClickListener(this);
 	}
 
 	public void createGame(View view){
 		//Log.d(TAG, EXTRA_MESSAGE);
 		Intent intent = new Intent(this, CreateGameActivity.class);
+		EditText handleText = (EditText) findViewById(R.id.handle);
+		String handleMessage = handleText.getText().toString();
+		EditText taglineText = (EditText) findViewById(R.id.tagline);
+		String taglineMessage = taglineText.getText().toString();
+		intent.putExtra(TAGLINE_MESSAGE, taglineMessage);
+		intent.putExtra(HANDLE_MESSAGE, handleMessage);
+		startActivity(intent);
+	}
+	public void joinGame(View view){
+		//Log.d(TAG, EXTRA_MESSAGE);
+		Intent intent = new Intent(this, JoinGameActivity.class);
 		EditText handleText = (EditText) findViewById(R.id.handle);
 		String handleMessage = handleText.getText().toString();
 		EditText taglineText = (EditText) findViewById(R.id.tagline);
@@ -60,10 +69,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			startActivity(new Intent(MainActivity.this,
 					JsonRequestActivity.class));
 			break;
-		case R.id.btnImageRequest:
-			startActivity(new Intent(MainActivity.this,
-					ImageRequestActivity.class));
-			break;
+
 		default:
 			break;
 		}

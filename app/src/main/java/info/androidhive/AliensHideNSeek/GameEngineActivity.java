@@ -180,7 +180,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     } //close on create
 
     //new test thread start
-    public void startProgress(View view) {
+    public void startProgress(View view) { //currently executed on xml button click
         new Thread(new Engine()).start();
     }
     //close new test thread
@@ -664,7 +664,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         Log.d(TAG, latString); Log.d(TAG, lonString);
                         //Log.d(TAG, Double.toString(lat));
                         //Log.d(TAG, Double.toString(player1.getLat()));
-                        //Log.d(TAG, Double.toString(player1.getLon()));
                         updateReq(latString, lonString);
                         alienArrayRequest(2);// !!! pass in real gameID here !!!
                     }
@@ -673,4 +672,4 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-}//close game engine class
+}//close game engine activity
