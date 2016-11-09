@@ -664,7 +664,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         Log.d(TAG, latString); Log.d(TAG, lonString);
                         //Log.d(TAG, Double.toString(lat));
                         //Log.d(TAG, Double.toString(player1.getLat()));
-                        //Log.d(TAG, Double.toString(player1.getLon()));
                         updateReq(latString, lonString);
                         alienArrayRequest(2);// !!! pass in real gameID here !!!
                     }
