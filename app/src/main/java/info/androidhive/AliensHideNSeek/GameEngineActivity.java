@@ -44,6 +44,14 @@ import info.androidhive.AliensHideNSeek.app.AppController;
 import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+    private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
+    Intent alienIntent = getIntent(); //figure out if we are dealing with an alien or human player
+    String alienStatus = alienIntent.getStringExtra(JoinGameActivity.ALIEN_PLAYER);
+    if(alienStatus == "alien") {
+
+    }
+
+
     Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
     Environment game1 = new Environment("Default",300000,8); // 300000ms = 5mins !!! 8 = max players --> should be user set
     private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
