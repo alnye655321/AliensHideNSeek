@@ -22,12 +22,10 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		btnString = (Button) findViewById(R.id.btnStringRequest);
 		btnJson = (Button) findViewById(R.id.btnJsonRequest);
-		btnImage = (Button) findViewById(R.id.btnImageRequest);
 
 		// button click listeners
 		btnString.setOnClickListener(this);
 		btnJson.setOnClickListener(this);
-		btnImage.setOnClickListener(this);
 	}
 
 	public void createGame(View view){
@@ -60,10 +58,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			startActivity(new Intent(MainActivity.this,
 					JsonRequestActivity.class));
 			break;
-		case R.id.btnImageRequest:
-			startActivity(new Intent(MainActivity.this,
-					ImageRequestActivity.class));
-			break;
+
 		default:
 			break;
 		}
