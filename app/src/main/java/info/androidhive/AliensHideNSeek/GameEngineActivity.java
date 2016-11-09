@@ -358,7 +358,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         params.put("handle", handleMessage);
         params.put("tagline", taglineMessage);
 
-        JSONObject parameters = new JSONObject(params);//create object payload
+        JSONObject parameters = new JSONObject(params);//create object payload String type, int id, int timeLimit, int players
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 url, parameters,
@@ -371,11 +371,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             int gameId = response.getInt("gameId");
                             int playerId = response.getInt("playerId");
                             //TAGINT
-                            Log.d("MYINT", "value: " + gameId);
-                            Log.d("MYINT", "value: " + playerId);
+                            //Log.d("MYINT", "value: " + gameId);
+                            //Log.d("MYINT", "value: " + playerId);
                             player1.setGameId(gameId); //define player properties from server response
                             player1.setPlayerId(playerId);
-                            game1.setGameId(gameId); //assign value to gameId on initial server response
+                            game1.setGameId(gameId);
+                            Log.d("MYINT", "value: " + game1.getGameId());
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -477,36 +479,30 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         Log.d(TAG, response.toString());
 
                         try {
-                            // Iterate json array response - loop through each json object
-                            String jsonResponse = "";
+                            // Parsing json array response
+                            // loop through each json object
                             for (int i = 0; i < response.length(); i++) {
 
                                 JSONObject alien = (JSONObject) response
                                         .get(i);
 
-                                int idRes = alien.getInt("id");
-                                String handleRes = alien.getString("handle");
-                                String taglineRes = alien.getString("tagline");
-                                boolean humanRes = alien.getBoolean("human");
-                                double latRes = alien.getDouble("lat");
-                                double lonRes = alien.getDouble("lon");
-                                double latStartRes = alien.getDouble("latstart");
-                                double lonStartRes = alien.getDouble("lonstart");
-                                int  gameIdRes = alien.getInt("game_id");
+                                int idResAlien = alien.getInt("id");
+                                String handleResAlien = alien.getString("handle");
+                                String taglineResAlien = alien.getString("tagline");
+                                boolean humanResAlien = alien.getBoolean("human");
+                                double latResAlien = alien.getDouble("lat");
+                                double lonResAlien = alien.getDouble("lon");
+                                double latStartResAlien = alien.getDouble("latstart");
+                                double lonStartResAlien = alien.getDouble("lonstart");
+                                int  gameIdResAlien = alien.getInt("game_id");
 
-                                jsonResponse += "idRes: " + idRes + "\n\n";
-                                jsonResponse += "handleRes: " + handleRes + "\n\n";
-                                jsonResponse += "taglineRes: " + taglineRes + "\n\n";
-                                jsonResponse += "humanRes: " + humanRes + "\n\n\n";
-                                jsonResponse += "latRes: " + latRes + "\n\n\n";
-                                jsonResponse += "lonRes: " + lonRes + "\n\n\n";
-                                jsonResponse += "latStartRes: " + latStartRes + "\n\n\n";
-                                jsonResponse += "lonStartRes: " + lonStartRes + "\n\n\n";
-                                jsonResponse += "gameIdRes: " + gameIdRes + "\n\n\n";
-
+                                //check if alien has captured human - ie. occupy same gps location --> Game Over
+                                int checkAlienWin = game1.gameWinnerCheck(player1.getId(), idResAlien, player1.getLat(), player1.getLon(), latResAlien, lonResAlien);
+                                Log.d("MYINT", "WinnerCheck: " + checkAlienWin);
+                                if (checkAlienWin != -1){
+                                    Log.d("MYINT", "AlienGameWinnerIS: " + checkAlienWin);
+                                }
                             }
-                            Log.d(TAG, jsonResponse);
-                            //game1.gameWinnerCheck();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
