@@ -39,6 +39,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		intent.putExtra(HANDLE_MESSAGE, handleMessage);
 		startActivity(intent);
 	}
+	public void joinGame(View view){
+		//Log.d(TAG, EXTRA_MESSAGE);
+		Intent intent = new Intent(this, JoinGameActivity.class);
+		EditText handleText = (EditText) findViewById(R.id.handle);
+		String handleMessage = handleText.getText().toString();
+		EditText taglineText = (EditText) findViewById(R.id.tagline);
+		String taglineMessage = taglineText.getText().toString();
+		intent.putExtra(TAGLINE_MESSAGE, taglineMessage);
+		intent.putExtra(HANDLE_MESSAGE, handleMessage);
+		startActivity(intent);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

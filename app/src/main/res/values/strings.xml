@@ -30,4 +30,6 @@
     <string name="stop_updates">Stop updates</string>
     <string name="location_updated_message">Location updated</string>
 
+    <string name="game1">Game 1: Denver</string>
+
 </resources>
