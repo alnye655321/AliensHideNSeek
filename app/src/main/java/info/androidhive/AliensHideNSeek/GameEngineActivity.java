@@ -180,7 +180,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     } //close on create
 
     //new test thread start
-    public void startProgress(View view) {
+    public void startProgress(View view) { //currently executed on xml button click
         new Thread(new Engine()).start();
     }
     //close new test thread
@@ -672,4 +672,4 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-}//close game engine class
+}//close game engine activity

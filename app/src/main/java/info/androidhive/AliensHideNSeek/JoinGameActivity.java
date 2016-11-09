@@ -27,20 +27,8 @@ public class JoinGameActivity extends Activity {
         Intent intent = getIntent();
         handleMessage = intent.getStringExtra(MainActivity.HANDLE_MESSAGE);
         taglineMessage = intent.getStringExtra(MainActivity.TAGLINE_MESSAGE);
-
-        TextView textView = new TextView(this);
-        textView.setTextSize(40);
-        textView.setText(handleMessage); //text views not working in linear layout
         Log.d("tagger", handleMessage);
-
-        TextView textView1 = new TextView(this);//text views not working in linear layout
-        textView1.setTextSize(40);
-        textView1.setText(taglineMessage);
         Log.d("tagger", taglineMessage);
-
-        ViewGroup layout = (ViewGroup) findViewById(R.id.activity_join_game);
-        layout.addView(textView);
-        layout.addView(textView1);
 
     }//close onCreate()
 
