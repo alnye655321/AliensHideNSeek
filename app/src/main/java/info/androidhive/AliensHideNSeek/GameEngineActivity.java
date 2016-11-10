@@ -686,6 +686,7 @@ public boolean alienStatus;
         if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             startLocationUpdates();
         }
+        gameActive = true;//start game loop
     }
 
     @Override
@@ -695,12 +696,13 @@ public boolean alienStatus;
         if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
+        gameActive = false; //stop game loop
     }
 
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
-
+        gameActive = false;//stop game loop
         super.onStop();
     }
 
