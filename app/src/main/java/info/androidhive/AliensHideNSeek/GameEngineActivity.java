@@ -45,8 +45,7 @@ import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
-    Intent alienIntent = getIntent(); //figure out if we are dealing with a alien or human player
-    String alienStatus = alienIntent.getStringExtra(JoinGameActivity.ALIEN_PLAYER);
+    private boolean alienStatus;
 
     Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
     Alien player2 = new Alien("Crawler","Xenomorph","Humans R Tasty",0,0,0,0);
@@ -134,6 +133,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         progressBar = (ProgressBar) findViewById(R.id.progressBar1); //for new thread
 
         Intent intent = getIntent();
+        //alienStatus = intent.getStringExtra(JoinGameActivity.ALIEN_PLAYER);//figure out if we are dealing with a alien or human player
+        boolean alienStatus = getIntent().getBooleanExtra("alienStatus", false);
 
         String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
         String taglineMessage = intent.getStringExtra(CreateGameActivity.TAGLINE_MESSAGE);
@@ -155,9 +156,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         layout.addView(textView);
         layout.addView(textView1);
         layout.addView(textView2);
-
-        if(alienStatus != "alien") {
-            createNewGame(); //only run as human !!! test
+        Log.d("MYSTR", "alienStatus: " + alienStatus);
+        if(alienStatus) {
+           //alien actions
+        }
+        else {
+            createNewGame(); //only run as human
         }
         //location settings------------------------------------------------------------------------
         // Locate the UI widgets.
@@ -727,7 +731,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                     @Override
                     public void run() {
 
-                        if(alienStatus == "alien") { //alien game
+                        if(alienStatus) { //alien game
                             lat = mCurrentLocation.getLatitude();
                             lon = mCurrentLocation.getLongitude();
                             player2.setLat(lat);
