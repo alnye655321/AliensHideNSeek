@@ -160,7 +160,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
 
         if(alienStatus) {
-           //alien actions
+            createNewAlien(); //adds to players database
         }
         else {
             createNewGame(); //only run as human
@@ -502,7 +502,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                     public void onResponse(JSONObject response) {
                         //Log.d(TAG, response.toString());
                         try {
-                            int gameId = response.getInt("gameId");
+                            int gameId = 2; //manual entry !!! need to set from previous alien lobby screen
                             int playerId = response.getInt("playerId");
                             //TAGINT
                             //Log.d("MYINT", "value: " + gameId);
@@ -510,7 +510,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             player2.setGameId(gameId); //define player properties from server response
                             player2.setPlayerId(playerId);
                             game1.setGameId(gameId);
-                            Log.d("MYINT", "value: " + game1.getGameId());
+                            Log.d("MYINT", "AlienPlayerId Value: " + playerId);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -540,9 +540,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     //JSON POST Req - Alien Continuous Update-------------------------------------------------------
     private void updateAlienReq(String lat, String lon) {
 
-        Intent intent = getIntent(); //get alien submitted values from previous activity --> JoinGameActivity
-        String handleMessage = intent.getStringExtra(JoinGameActivity.HANDLE_MESSAGE);
-        String taglineMessage = intent.getStringExtra(JoinGameActivity.TAGLINE_MESSAGE);
         String tag_json_obj = "json_obj_req";
 
         String url = "http://node.nyedigital.com/update/alien";
@@ -552,9 +549,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         params.put("lat", lat);
         params.put("lon", lon);
         params.put("checkStart", player2.getCheckStart());
-        params.put("gameId", "2");
-        params.put("handle", handleMessage);
-        params.put("tagline", taglineMessage);
 
         JSONObject parameters = new JSONObject(params);//create object payload
 
@@ -795,6 +789,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                     public void run() {
 
                         if(alienStatus) { //alien game
+                            Log.d("MYSTR", "alienStatus: true");
                             lat = mCurrentLocation.getLatitude();
                             lon = mCurrentLocation.getLongitude();
                             player2.setLat(lat);
@@ -802,24 +797,27 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             String latString = Double.toString(player2.getLat());
                             String lonString = Double.toString(player2.getLon());
                             Log.d(TAG, latString);
-                            Log.d(TAG, lonString);
-                            //Log.d(TAG, Double.toString(lat));
+                            //Log.d(TAG, lonString);
+                            updateAlienReq(latString, lonString);
+                            Log.d(TAG, Double.toString(lat));
                             //Log.d(TAG, Double.toString(player1.getLat()));
 
                         }
                         else{ // human/host game
+                            Log.d("MYSTR", "alienStatus: false");
                             lat = mCurrentLocation.getLatitude();
                             lon = mCurrentLocation.getLongitude();
                             player1.setLat(lat);
                             player1.setLon(lon);
                             String latString = Double.toString(player1.getLat());
                             String lonString = Double.toString(player1.getLon());
-                            Log.d(TAG, latString);
-                            Log.d(TAG, lonString);
+                            //Log.d(TAG, latString);
+                            //Log.d(TAG, lonString);
                             //Log.d(TAG, Double.toString(lat));
                             //Log.d(TAG, Double.toString(player1.getLat()));
                             updateReq(latString, lonString);
                             alienArrayRequest(2);// !!! pass in real gameID here !!!
+
                         }
                     }//end run
                 });
