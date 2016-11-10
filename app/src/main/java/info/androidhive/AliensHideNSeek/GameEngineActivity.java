@@ -133,8 +133,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         progressBar = (ProgressBar) findViewById(R.id.progressBar1); //for new thread
 
         Intent intent = getIntent();
-        //alienStatus = intent.getStringExtra(JoinGameActivity.ALIEN_PLAYER);//figure out if we are dealing with a alien or human player
+
         boolean alienStatus = getIntent().getBooleanExtra("alienStatus", false);
+        Log.d("MYSTR", "alienStatus: " + alienStatus);
 
         String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
         String taglineMessage = intent.getStringExtra(CreateGameActivity.TAGLINE_MESSAGE);
@@ -156,7 +157,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         layout.addView(textView);
         layout.addView(textView1);
         layout.addView(textView2);
-        Log.d("MYSTR", "alienStatus: " + alienStatus);
+
+
         if(alienStatus) {
            //alien actions
         }
@@ -473,6 +475,67 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 // Add req to queue
         AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
     } //JSON POST Req - Human Continuous Update-----------------------------------------------------
+
+    //JSON POST Req - Create Alien Player----------run in onCreate()--------------------------------
+    private void createNewAlien() {
+
+        Intent intent = getIntent(); //get alien submitted values from previous activity --> JoinGameActivity
+        String handleMessage = intent.getStringExtra(JoinGameActivity.HANDLE_MESSAGE);
+        String taglineMessage = intent.getStringExtra(JoinGameActivity.TAGLINE_MESSAGE);
+        String tag_json_obj = "json_obj_req";
+        String gameIdMessage = "2"; //manual entry !!! need to set from previous alien lobby screen
+
+        String url = "http://node.nyedigital.com/alien";
+
+        Map<String, String> params = new HashMap();// object payload values
+        params.put("handle", handleMessage);
+        params.put("tagline", taglineMessage);
+        params.put("gameId", gameIdMessage);
+
+        JSONObject parameters = new JSONObject(params);//create object payload String type, int id, int timeLimit, int players
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Log.d(TAG, response.toString());
+                        try {
+                            int gameId = response.getInt("gameId");
+                            int playerId = response.getInt("playerId");
+                            //TAGINT
+                            //Log.d("MYINT", "value: " + gameId);
+                            //Log.d("MYINT", "value: " + playerId);
+                            player2.setGameId(gameId); //define player properties from server response
+                            player2.setPlayerId(playerId);
+                            game1.setGameId(gameId);
+                            Log.d("MYINT", "value: " + game1.getGameId());
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+            }
+        }) {
+
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("name", "Android");
+
+//                return params;
+//            }
+        };
+
+// Add req to queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+    } //JSON POST Req - Create New Alien Player-----------------------------------------------------
 
     //JSON POST Req - Alien Continuous Update-------------------------------------------------------
     private void updateAlienReq(String lat, String lon) {
