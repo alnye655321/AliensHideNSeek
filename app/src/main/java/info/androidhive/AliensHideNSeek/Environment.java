@@ -13,7 +13,7 @@ public class Environment extends Game {
     // environment constructor
     Environment(String type, int timeLimit, int players) {
         super(timeLimit, players);
-        this.type = type;
+        this.type = type; // Default, Human, Alien
     }
 
     public String getType() {
