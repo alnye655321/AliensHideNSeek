@@ -45,7 +45,7 @@ public class Environment extends Game {
     //should change this to meters, along with above distance func. !!! Currently .01 km !!!
     public int gameWinnerCheck(int humanPlayerId, int alienPlayerId, double humanLat, double humanLon, double alienLat, double alienLon) {
         int winner;
-        if(getDistance(humanLat, humanLon, alienLat, alienLon) < .01 ){
+        if(getDistance(humanLat, humanLon, alienLat, alienLon) < .015 ){
             winner = alienPlayerId;
             return winner;
         }
