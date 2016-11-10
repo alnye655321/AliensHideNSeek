@@ -45,14 +45,11 @@ import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
-    Intent alienIntent = getIntent(); //figure out if we are dealing with an alien or human player
+    Intent alienIntent = getIntent(); //figure out if we are dealing with a alien or human player
     String alienStatus = alienIntent.getStringExtra(JoinGameActivity.ALIEN_PLAYER);
-    if(alienStatus == "alien") {
-
-    }
-
 
     Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
+    Alien player2 = new Alien("Crawler","Xenomorph","Humans R Tasty",0,0,0,0);
     Environment game1 = new Environment("Default",300000,8); // 300000ms = 5mins !!! 8 = max players --> should be user set
     private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
     public Handler handler;
@@ -133,8 +130,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_engine);
 
-        //btnJsonObj = (Button) findViewById(R.id.btnJsonObj);
-        //btnJsonObj.setOnClickListener(this);
         handler = new Handler(); //for new thread
         progressBar = (ProgressBar) findViewById(R.id.progressBar1); //for new thread
 
@@ -160,8 +155,10 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         layout.addView(textView);
         layout.addView(textView1);
         layout.addView(textView2);
-        createNewGame();
 
+        if(alienStatus != "alien") {
+            createNewGame(); //only run as human !!! test
+        }
         //location settings------------------------------------------------------------------------
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
@@ -330,8 +327,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
 
-        String playaName = player1.getName();
-        Log.i(TAG, playaName);
+//        String playaName = player1.getName();
+//        Log.i(TAG, playaName);
         //Log.i(TAG, "Handler Update Init");
 
     }
@@ -352,7 +349,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
      //JSON POST Req - Create New Game with Host Player---------run in onCreate()-------------------
     private void createNewGame() {
-// Tag used to cancel the request
+
         Intent intent = getIntent(); //get host submitted values from previous activity --> CreateGameActivity
         String gameMessage = intent.getStringExtra(CreateGameActivity.GAME_MESSAGE);
         String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
@@ -411,7 +408,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
     } //JSON POST Req - Create New Game with Host Player--------------------------------------------
 
-    //JSON POST Req - Continuous Update-------------------------------------------------------------
+    //JSON POST Req - Human Continuous Update-------------------------------------------------------------
     private void updateReq(String lat, String lon) {
 // Tag used to cancel the request
 
@@ -459,7 +456,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
             }
         }) {
-
+// optional params
 //            @Override
 //            protected Map<String, String> getParams() {
 //                Map<String, String> params = new HashMap<String, String>();
@@ -471,9 +468,75 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
 // Add req to queue
         AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
-    } //JSON POST Req - Continuous Update-----------------------------------------------------------
+    } //JSON POST Req - Human Continuous Update-----------------------------------------------------
 
-    //alien enemy location call continuous update---------------------------------------------------
+    //JSON POST Req - Alien Continuous Update-------------------------------------------------------
+    private void updateAlienReq(String lat, String lon) {
+
+        Intent intent = getIntent(); //get alien submitted values from previous activity --> JoinGameActivity
+        String handleMessage = intent.getStringExtra(JoinGameActivity.HANDLE_MESSAGE);
+        String taglineMessage = intent.getStringExtra(JoinGameActivity.TAGLINE_MESSAGE);
+        String tag_json_obj = "json_obj_req";
+
+        String url = "http://node.nyedigital.com/update/alien";
+
+        Map<String, String> params = new HashMap();// object payload values
+        params.put("id", "2");
+        params.put("lat", lat);
+        params.put("lon", lon);
+        params.put("checkStart", player2.getCheckStart());
+        params.put("gameId", "2");
+        params.put("handle", handleMessage);
+        params.put("tagline", taglineMessage);
+
+        JSONObject parameters = new JSONObject(params);//create object payload
+
+        JsonObjectRequest updateObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, parameters,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Log.d(TAG, response.toString());
+                        Log.d(TAG, response.toString());
+
+                        try {
+                            // Parsing json object response
+                            // response will be a json object
+                            String startStatus = response.getString("startStatus"); //set response values
+                            String updateStatus = response.getString("updateStatus");
+                            Log.d(TAG, startStatus);
+                            Log.d(TAG, updateStatus);
+                            if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
+                                player2.setCheckStart("false");
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+            }
+        }) {
+// optional params
+//            @Override
+//            protected Map<String, String> getParams() {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("name", "Android");
+
+//                return params;
+//            }
+        };
+
+// Add req to queue
+        AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
+    } //JSON POST Req - Alien Continuous Update-----------------------------------------------------
+
+    //alien enemy location call continuous update - for host ---------------------------------------
     //create array beforehand - set for
     private void alienArrayRequest(int gameId) {
 
@@ -531,7 +594,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(alienReq);
     }
-    //alien enemy location call continuous update--------------------------------------------------
+    //alien enemy location call continuous update for host-s-----------------------------------------
 
     public void onClick(View v) { //for json obj buttons
         switch (v.getId()) {
@@ -650,7 +713,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         super.onSaveInstanceState(savedInstanceState);
     }
 
-
+//game loop - run on separate thread
     class Engine implements Runnable {
         @Override
         public void run() {
@@ -663,18 +726,35 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        lat = mCurrentLocation.getLatitude();
-                        lon = mCurrentLocation.getLongitude();
-                        player1.setLat(lat);
-                        player1.setLon(lon);
-                        String latString = Double.toString(player1.getLat());
-                        String lonString = Double.toString(player1.getLon());
-                        Log.d(TAG, latString); Log.d(TAG, lonString);
-                        //Log.d(TAG, Double.toString(lat));
-                        //Log.d(TAG, Double.toString(player1.getLat()));
-                        updateReq(latString, lonString);
-                        alienArrayRequest(2);// !!! pass in real gameID here !!!
-                    }
+
+                        if(alienStatus == "alien") { //alien game
+                            lat = mCurrentLocation.getLatitude();
+                            lon = mCurrentLocation.getLongitude();
+                            player2.setLat(lat);
+                            player2.setLon(lon);
+                            String latString = Double.toString(player2.getLat());
+                            String lonString = Double.toString(player2.getLon());
+                            Log.d(TAG, latString);
+                            Log.d(TAG, lonString);
+                            //Log.d(TAG, Double.toString(lat));
+                            //Log.d(TAG, Double.toString(player1.getLat()));
+
+                        }
+                        else{ // human/host game
+                            lat = mCurrentLocation.getLatitude();
+                            lon = mCurrentLocation.getLongitude();
+                            player1.setLat(lat);
+                            player1.setLon(lon);
+                            String latString = Double.toString(player1.getLat());
+                            String lonString = Double.toString(player1.getLon());
+                            Log.d(TAG, latString);
+                            Log.d(TAG, lonString);
+                            //Log.d(TAG, Double.toString(lat));
+                            //Log.d(TAG, Double.toString(player1.getLat()));
+                            updateReq(latString, lonString);
+                            alienArrayRequest(2);// !!! pass in real gameID here !!!
+                        }
+                    }//end run
                 });
             }
         }
