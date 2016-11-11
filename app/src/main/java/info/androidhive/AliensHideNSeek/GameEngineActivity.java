@@ -550,12 +550,14 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         String tag_json_obj = "json_obj_req";
 
         String url = "http://node.nyedigital.com/update/alien";
+        String gameIdString = Integer.toString(player2.getGameId());
 
         Map<String, String> params = new HashMap();// object payload values
         params.put("id", "2");
         params.put("lat", lat);
         params.put("lon", lon);
         params.put("checkStart", player2.getCheckStart());
+        params.put("gameId", gameIdString);
 
         JSONObject parameters = new JSONObject(params);//create object payload
 
@@ -573,11 +575,18 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             // response will be a json object
                             String startStatus = response.getString("startStatus"); //set response values
                             String updateStatus = response.getString("updateStatus");
-                            Log.d(TAG, startStatus);
-                            Log.d(TAG, updateStatus);
+                            Double humanLatRes = response.getDouble("humanLat");
+                            Double humanLonRes = response.getDouble("humanLon");
+                            //Log.d(TAG, startStatus);
+                            //Log.d(TAG, updateStatus);
+                            Log.d("MYINT", "Human Lat Response: " + humanLatRes);
+                            Log.d("MYINT", "Human Lon Response: " + humanLonRes);
                             if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
                                 player2.setCheckStart("false");
                             }
+
+                            double tempDistance = game1.getDistance(humanLatRes, humanLonRes, player2.getLat(), player2.getLon()); //get distance from human
+                            distance = tempDistance * 1000; //update distance to send to display
 
                         } catch (JSONException e) {
                             e.printStackTrace();
