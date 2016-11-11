@@ -160,6 +160,7 @@ public boolean alienStatus;
 
         if(alienStatus) {
             createNewAlien(); //adds to players database
+            Log.d("MYSTR", "Alien Created!");
         }
         else {
             createNewGame(); //only run as human
