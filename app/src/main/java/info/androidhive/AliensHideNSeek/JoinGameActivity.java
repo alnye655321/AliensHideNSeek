@@ -18,6 +18,9 @@ public class JoinGameActivity extends Activity {
     public final static String HANDLE_MESSAGE = "handle";
     public final static String TAGLINE_MESSAGE = "tagline";
     public final static String GAME_MESSAGE = "gameMessage";
+    public final static String ALIEN_PLAYER = "alienStatus";
+    //public final static String playerType = "alien";
+//need a way to set a gameId here --> pull from a get request of open games and generate join buttons
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,5 +34,14 @@ public class JoinGameActivity extends Activity {
         Log.d("tagger", taglineMessage);
 
     }//close onCreate()
+
+    public void joinGame(View view){
+        //Log.d(TAG, EXTRA_MESSAGE);
+        Intent gameEngineStart = new Intent(this, GameEngineActivity.class);
+        gameEngineStart.putExtra(TAGLINE_MESSAGE, taglineMessage);
+        gameEngineStart.putExtra(HANDLE_MESSAGE, handleMessage);
+        gameEngineStart.putExtra(ALIEN_PLAYER, true);
+        startActivity(gameEngineStart);
+    }
 
 }// close class
