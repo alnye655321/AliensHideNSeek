@@ -44,8 +44,9 @@ import info.androidhive.AliensHideNSeek.app.AppController;
 import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-    private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
-public boolean alienStatus;
+    //private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
+    public boolean alienStatus; //global truth of player type
+    public double distance = 666; //global distance to/from human/alien - set to default high number will lower on first updateReq()
     Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
     Alien player2 = new Alien("Crawler","Xenomorph","Humans R Tasty",0,0,0,0);
     Environment game1 = new Environment("Default",300000,8); // 300000ms = 5mins !!! 8 = max players --> should be user set
@@ -95,11 +96,13 @@ public boolean alienStatus;
     protected TextView mLastUpdateTimeTextView;
     protected TextView mLatitudeTextView;
     protected TextView mLongitudeTextView;
+    protected TextView distanceTextView;
 
     // Labels.
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
     protected String mLastUpdateTimeLabel;
+    protected String distanceLabel;
 
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
@@ -172,11 +175,13 @@ public boolean alienStatus;
         mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
+        distanceTextView = (TextView) findViewById(R.id.distance_text);
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
         mLongitudeLabel = getResources().getString(R.string.longitude_label);
         mLastUpdateTimeLabel = getResources().getString(R.string.last_update_time_label);
+        distanceLabel = getResources().getString(R.string.distance_label);
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
@@ -332,6 +337,8 @@ public boolean alienStatus;
                 mCurrentLocation.getLongitude()));
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
+        distanceTextView.setText(String.format("%s: %f", distanceLabel,
+                distance));
 
 //        String playaName = player1.getName();
 //        Log.i(TAG, playaName);
@@ -611,8 +618,8 @@ public boolean alienStatus;
                         Log.d(TAG, response.toString());
 
                         try {
-                            // Parsing json array response
-                            // loop through each json object
+                            // Parsing json array response, loop through each json object
+
                             for (int i = 0; i < response.length(); i++) {
 
                                 JSONObject alien = (JSONObject) response
@@ -627,6 +634,11 @@ public boolean alienStatus;
                                 double latStartResAlien = alien.getDouble("latstart");
                                 double lonStartResAlien = alien.getDouble("lonstart");
                                 int  gameIdResAlien = alien.getInt("game_id");
+
+                                double tempDistance = game1.getDistance(player1.getLat(), player1.getLon(), latResAlien, lonResAlien); //get distance from alien
+                                if(tempDistance < distance) { //if the distance is closer, update distance to send to display
+                                    distance = tempDistance * 1000;
+                                }
 
                                 //check if alien has captured human - ie. occupy same gps location --> Game Over
                                 int checkAlienWin = game1.gameWinnerCheck(player1.getId(), idResAlien, player1.getLat(), player1.getLon(), latResAlien, lonResAlien);
