@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.text.DateFormat;
@@ -56,7 +58,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     public ProgressBar progressBar; //no longer using from thread example
     public double lat; //local gps update variables, used in game engine thread
     public double lon;
-
+    private TextView game_clock;//create game clock TextView --> in xml
 
     //motion tracker animation settings
     private ImageView mTapScreenTextAnimImgView;
@@ -186,6 +188,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         layout.addView(textView1);
         layout.addView(textView2);
 
+        game_clock = (TextView) findViewById( R.id.timer_text );//set game clock from xml
+
         //start motion tracker animation
         mTapScreenTextAnimImgView = (ImageView) findViewById(R.id.imageView);
         new SceneAnimation(mTapScreenTextAnimImgView, mTapScreenTextAnimRes, mTapScreenTextAnimDuration, mTapScreenTextAnimBreak);
@@ -234,6 +238,19 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         new Thread(new Engine()).start(); //start new game engine thread
         startButton.setVisibility(View.GONE);
         stopButton.setVisibility(View.VISIBLE);
+
+        //start new game timer - updating every 1000ms
+        new CountDownTimer(20*60000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                game_clock.setText("Time: " +new SimpleDateFormat("mm:ss").format(new Date( millisUntilFinished)));
+            }
+
+            public void onFinish() {
+                game_clock.setText("Game Complete!");
+            }
+        }.start();
+        //close game timer
     }
     //close new test thread
 
@@ -690,6 +707,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                                 Log.d("MYINT", "WinnerCheck: " + checkAlienWin);
                                 if (checkAlienWin != -1){
                                     Log.d("MYINT", "AlienGameWinnerIS: " + checkAlienWin);
+                                    game1.setActive(false);
                                 }
                             }
 

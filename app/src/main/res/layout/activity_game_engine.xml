@@ -19,7 +19,16 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:adjustViewBounds="true" />
 
     <TextView
-        android:id="@+id/distance_text"
+    android:id="@+id/distance_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:textColor="#ff0000"
+    android:background="#6E9ADB"
+    android:textSize="@dimen/large_text_size" />
+
+    <TextView
+        android:id="@+id/timer_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
