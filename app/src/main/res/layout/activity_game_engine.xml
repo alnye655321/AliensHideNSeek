@@ -7,7 +7,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:paddingLeft="16dp"
 android:paddingRight="16dp"
-
+android:background="@android:color/black"
 android:orientation="vertical"
 tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
 
@@ -18,7 +18,14 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:layout_centerInParent="true"
         android:adjustViewBounds="true" />
 
-
+    <TextView
+        android:id="@+id/distance_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ff0000"
+        android:background="#6E9ADB"
+        android:textSize="@dimen/large_text_size" />
 
     <TextView
         android:id="@+id/latitude_text"
@@ -26,7 +33,8 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/small_margin"
         android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/longitude_text"
@@ -34,7 +42,8 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/small_margin"
         android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/last_update_time_text"
@@ -42,15 +51,10 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/small_margin"
         android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"/>
 
-    <TextView
-        android:id="@+id/distance_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
+
 
 
     <ProgressBar

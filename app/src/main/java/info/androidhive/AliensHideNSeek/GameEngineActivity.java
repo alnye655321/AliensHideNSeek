@@ -141,6 +141,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     protected String mLastUpdateTime;
 //end location settings-----------------------------------------------------------------------------
 
+
     //private String TAG = JsonRequestActivity.class.getSimpleName();
     private String TAG = "tagger";
     private int TAGINT = 1;
@@ -372,8 +373,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 mCurrentLocation.getLongitude()));
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
-        distanceTextView.setText(String.format("%s: %f", distanceLabel,
-                distance));
+        distanceTextView.setText(String.format("%.2f %s", distance,
+                distanceLabel));
 
 //        String playaName = player1.getName();
 //        Log.i(TAG, playaName);
