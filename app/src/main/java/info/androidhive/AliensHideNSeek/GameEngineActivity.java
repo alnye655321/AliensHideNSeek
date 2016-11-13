@@ -57,6 +57,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     public double lat; //local gps update variables, used in game engine thread
     public double lon;
 
+
     //motion tracker animation settings
     private ImageView mTapScreenTextAnimImgView;
     private final int[] mTapScreenTextAnimRes = {R.drawable.human001, R.drawable.human003,
@@ -119,6 +120,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     protected TextView mLatitudeTextView;
     protected TextView mLongitudeTextView;
     protected TextView distanceTextView;
+    protected Button startButton;
+    protected Button stopButton;
 
     // Labels.
     protected String mLatitudeLabel;
@@ -202,6 +205,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
         distanceTextView = (TextView) findViewById(R.id.distance_text);
+        startButton = (Button) findViewById(R.id.start_button);
+        stopButton = (Button) findViewById(R.id.stop_button);
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -221,9 +226,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         //close location settings------------------------------------------------------------------
     } //close on create
 
+
     //new test thread start
     public void startProgress(View view) { //currently executed on xml button click
-        new Thread(new Engine()).start();
+        startLocationUpdates(); // start google location API update service
+        new Thread(new Engine()).start(); //start new game engine thread
+        startButton.setVisibility(View.GONE);
+        stopButton.setVisibility(View.VISIBLE);
     }
     //close new test thread
 
