@@ -7,7 +7,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:paddingLeft="16dp"
 android:paddingRight="16dp"
-
+android:background="@android:color/black"
 android:orientation="vertical"
 tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
 
@@ -17,6 +17,80 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:adjustViewBounds="true" />
+
+    <TextView
+    android:id="@+id/distance_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:textColor="#ff0000"
+    android:background="#6E9ADB"
+    android:textSize="@dimen/large_text_size" />
+
+    <TextView
+        android:id="@+id/timer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ff0000"
+        android:background="#6E9ADB"
+        android:textSize="@dimen/large_text_size" />
+
+    <TextView
+        android:id="@+id/latitude_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_margin"
+        android:layout_marginStart="@dimen/small_margin"
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/longitude_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_margin"
+        android:layout_marginStart="@dimen/small_margin"
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/last_update_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_margin"
+        android:layout_marginStart="@dimen/small_margin"
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"/>
+
+
+
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="10"
+        android:padding="4dip" >
+    </ProgressBar>
+
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startProgress"
+        android:text="Start Game" >
+    </Button>
+
+    <Button
+        android:id="@+id/stop_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leave Game"
+        android:visibility="gone">
+    </Button>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +107,8 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
             android:layout_marginRight="10dp"
             android:gravity="center"
             android:onClick="startUpdatesButtonHandler"
-            android:text="@string/start_updates" />
+            android:text="@string/start_updates"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/stop_updates_button"
@@ -45,58 +120,8 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
             android:enabled="false"
             android:gravity="center"
             android:onClick="stopUpdatesButtonHandler"
-            android:text="@string/stop_updates" />
+            android:text="@string/stop_updates"
+            android:visibility="gone"/>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/latitude_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
-
-    <TextView
-        android:id="@+id/longitude_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
-
-    <TextView
-        android:id="@+id/last_update_time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
-
-    <TextView
-        android:id="@+id/distance_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size" />
-
-
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:max="10"
-        android:padding="4dip" >
-    </ProgressBar>
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="startProgress"
-        android:text="Start" >
-    </Button>
 
 </LinearLayout>
