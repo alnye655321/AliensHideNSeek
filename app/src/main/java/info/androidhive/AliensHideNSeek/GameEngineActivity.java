@@ -2,7 +2,10 @@ package info.androidhive.AliensHideNSeek;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -59,6 +62,11 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     public double lat; //local gps update variables, used in game engine thread
     public double lon;
     private TextView game_clock;//create game clock TextView --> in xml
+
+    //soundpool tracking beeps
+    private SoundPool soundpool;
+    private HashMap<Integer, Integer> soundsMap;
+    //close soundpool tracking beeps
 
     //motion tracker animation settings
     private ImageView mTapScreenTextAnimImgView;
@@ -191,6 +199,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
         game_clock = (TextView) findViewById( R.id.timer_text );//set game clock from xml
 
+        //soundpool tracking beeps
+        soundpool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100); //first value only allows 1 audio stream playing at once, frequency updated automatically based on distance
+        soundsMap = new HashMap<Integer, Integer>();
+        soundsMap.put(1, soundpool.load(this, R.raw.short_beep, 1));
+        //close soundpool tracking beeps
+
         //start motion tracker animation
         mTapScreenTextAnimImgView = (ImageView) findViewById(R.id.imageView);
         new SceneAnimation(mTapScreenTextAnimImgView, mTapScreenTextAnimRes, mTapScreenTextAnimDuration, mTapScreenTextAnimBreak);
@@ -232,12 +246,22 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         //close location settings------------------------------------------------------------------
     } //close on create
 
+    //soundpool tracking beeps
+    public void playSound(int sound, float fSpeed) {
+        AudioManager mgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = streamVolumeCurrent / streamVolumeMax;
+        soundpool.play(soundsMap.get(sound), volume, volume, 1, -1, fSpeed); // -1 triggers infinite loop here
+    }
+    //soundpool tracking beeps
 
-    //new test thread start
+
+    //start game - create new game thread, audio, location updates
     public void startProgress(View view) { //currently executed on xml button click
         startLocationUpdates(); // start google location API update service
         new Thread(new Engine()).start(); //start new game engine thread
-        startButton.setVisibility(View.GONE);
+        startButton.setVisibility(View.GONE); //switch the buttons
         stopButton.setVisibility(View.VISIBLE);
 
         //start new game timer - updating every 1000ms
@@ -252,8 +276,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
             }
         }.start();
         //close game timer
+        playSound(1, 0.5f); //soundpool tracking beeps - starting at lowest frequency
     }
-    //close new test thread
+    //close start game
 
     //location methods------------------------------------------------------------------------------
     /**
@@ -642,6 +667,30 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             double tempDistance = game1.getDistance(humanLatRes, humanLonRes, player2.getLat(), player2.getLon()); //get distance from human
                             distance = tempDistance * 1000; //update distance to send to display
 
+                            //soundpool tracking beeps
+                            if(distance > 150){
+                                playSound(1, 0.5f);
+                            }
+                            else if(distance > 125){
+                                playSound(1, 0.7f);
+                            }
+                            else if(distance > 100){
+                                playSound(1, 0.9f);
+                            }
+                            else if(distance > 75){
+                                playSound(1, 1.0f);
+                            }
+                            else if(distance > 50){
+                                playSound(1, 1.2f);
+                            }
+                            else if(distance > 25){
+                                playSound(1, 1.4f);
+                            }
+                            else if(distance > 0){
+                                playSound(1, 1.6f);
+                            }
+                            //close soundpool tracking beeps
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -701,6 +750,30 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                                 double tempDistance = game1.getDistance(player1.getLat(), player1.getLon(), latResAlien, lonResAlien); //get distance from alien
                                 if(tempDistance < distance) { //if the distance is closer, update distance to send to display
                                     distance = tempDistance * 1000;
+
+                                    //soundpool tracking beeps
+                                    if(distance > 150){
+                                        playSound(1, 0.5f);
+                                    }
+                                    else if(distance > 125){
+                                        playSound(1, 0.7f);
+                                    }
+                                    else if(distance > 100){
+                                        playSound(1, 0.9f);
+                                    }
+                                    else if(distance > 75){
+                                        playSound(1, 1.0f);
+                                    }
+                                    else if(distance > 50){
+                                        playSound(1, 1.2f);
+                                    }
+                                    else if(distance > 25){
+                                        playSound(1, 1.4f);
+                                    }
+                                    else if(distance > 0){
+                                        playSound(1, 1.6f);
+                                    }
+                                    //close soundpool tracking beeps
                                 }
 
                                 //check if alien has captured human - ie. occupy same gps location --> Game Over

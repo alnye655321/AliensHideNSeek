@@ -33,7 +33,9 @@
         <activity
             android:name=".CreateGameActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".GameEngineActivity" />
+        <activity
+            android:name=".GameEngineActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".JoinGameActivity"
             android:screenOrientation="portrait"></activity>
