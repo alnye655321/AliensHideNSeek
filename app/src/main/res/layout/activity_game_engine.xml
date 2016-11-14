@@ -88,7 +88,9 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:id="@+id/stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="bottom|left"
         android:text="Leave Game"
+        android:onClick="leaveGame"
         android:visibility="gone">
     </Button>
 
