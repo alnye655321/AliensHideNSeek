@@ -64,8 +64,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private TextView game_clock;//create game clock TextView --> in xml
 
     //soundpool tracking beeps
-    public SoundPool soundpool;
-    public HashMap<Integer, Integer> soundsMap;
+    private SoundPool soundpool;
+    private HashMap<Integer, Integer> soundsMap;
     //close soundpool tracking beeps
 
     //motion tracker animation settings
@@ -176,6 +176,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         soundpool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100); //first value only allows 1 audio stream playing at once, frequency updated automatically based on distance
         soundsMap = new HashMap<Integer, Integer>();
         soundsMap.put(1, soundpool.load(this, R.raw.short_beep, 1));
+        soundsMap.put(2, soundpool.load(this, R.raw.short_beep, 1));
         //close soundpool tracking beeps
 
         //start motion tracker animation
@@ -226,8 +227,14 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         float volume = streamVolumeCurrent / streamVolumeMax;
         soundpool.play(soundsMap.get(sound), volume, volume, 1, -1, fSpeed); // -1 triggers infinite loop here
     }
-    public void playSingleSound(int sound) {
-        soundpool.stop(soundsMap.get(sound));
+    public void playSingleSound(int sound, float fSpeed) {
+        soundpool.autoPause();
+        soundpool.stop(1);
+        AudioManager mgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = streamVolumeCurrent / streamVolumeMax;
+        soundpool.play(soundsMap.get(sound), volume, volume, 1, 0, fSpeed); // 0 is single sound
     }
     //soundpool tracking beeps
 
@@ -783,11 +790,23 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     @Override
     protected void onStop() {
+        super.onStop();
         mGoogleApiClient.disconnect();
         gameActive = false;//stop game loop
         mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
         soundpool.autoPause();
-        super.onStop();
+        soundpool.stop(1); //stop sound - need correct stream id here
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();  // Always call the superclass
+        gameActive = false;//stop game loop
+        soundpool.autoPause(); //pause sound
+        Log.d("MYSTR", "onDestory: true");
+
+        // Stop method tracing that the activity started during onCreate()
+        android.os.Debug.stopMethodTracing();
     }
 
     //Runs when a GoogleApiClient object successfully connects
@@ -848,6 +867,14 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
         savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //leave game button --> back to main screen
+    public void leaveGame(View view){
+        soundpool.autoPause(); //pasue sound
+        //soundpool.stop(1); //stop sound - need correct stream id here
+        Intent mainActivityStart = new Intent(this, MainActivity.class);
+        startActivity(mainActivityStart);
     }
 
 //game loop - run on separate thread
