@@ -92,6 +92,17 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
         android:visibility="gone">
     </Button>
 
+    <TextView
+        android:id="@+id/game_over"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff0000"
+        android:background="#6E9ADB"
+        android:gravity="bottom|center"
+        android:visibility="gone"
+        android:text="Game Over - You Have Lost"
+        android:textSize="@dimen/large_text_size" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

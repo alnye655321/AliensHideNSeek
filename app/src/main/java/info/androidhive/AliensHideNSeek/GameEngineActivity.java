@@ -122,6 +122,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     protected TextView mLatitudeTextView;
     protected TextView mLongitudeTextView;
     protected TextView distanceTextView;
+    protected TextView gameOverTextView;
     protected Button startButton;
     protected Button stopButton;
 
@@ -194,7 +195,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         mTapScreenTextAnimImgView = (ImageView) findViewById(R.id.imageView);
         new SceneAnimation(mTapScreenTextAnimImgView, mTapScreenTextAnimRes, mTapScreenTextAnimDuration, mTapScreenTextAnimBreak);
 
-
         if(alienStatus) {
             createNewAlien(); //adds to players database
             Log.d("MYSTR", "Alien Created!");
@@ -210,6 +210,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
         distanceTextView = (TextView) findViewById(R.id.distance_text);
+        gameOverTextView = (TextView) findViewById(R.id.game_over);
         startButton = (Button) findViewById(R.id.start_button);
         stopButton = (Button) findViewById(R.id.stop_button);
 
@@ -240,7 +241,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         stopButton.setVisibility(View.VISIBLE);
 
         //start new game timer - updating every 1000ms
-        new CountDownTimer(20*60000, 1000) {
+        new CountDownTimer(10*60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 game_clock.setText("Time: " +new SimpleDateFormat("mm:ss").format(new Date( millisUntilFinished)));
@@ -708,6 +709,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                                 if (checkAlienWin != -1){
                                     Log.d("MYINT", "AlienGameWinnerIS: " + checkAlienWin);
                                     game1.setActive(false);
+                                    gameOverTextView.setVisibility(View.VISIBLE);
                                 }
                             }
 
@@ -773,12 +775,14 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
             stopLocationUpdates();
         }
         gameActive = false; //stop game loop
+        mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
     }
 
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
         gameActive = false;//stop game loop
+        mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
         super.onStop();
     }
 
