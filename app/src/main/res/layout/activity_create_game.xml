@@ -7,18 +7,48 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-
     android:orientation="vertical"
+    android:background="@android:color/black"
 tools:context="info.androidhive.AliensHideNSeek.CreateGameActivity">
+
+    <!-- Header aligned to top -->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#6E9ADB"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Create New Game"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|center"
+        android:src="@drawable/hungry_alien2_large" />
 
 <EditText android:id="@+id/gamename"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textColor="#FFFFFF"
+    android:singleLine="true"
     android:hint="@string/gamename_message"/>
+
 <EditText android:id="@+id/playercount"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textColor="#FFFFFF"
+    android:singleLine="true"
     android:hint="@string/playercount_message"/>
+
 <Button
     android:layout_width="100dp"
     android:layout_height="wrap_content"
