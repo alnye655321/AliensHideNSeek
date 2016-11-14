@@ -64,8 +64,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private TextView game_clock;//create game clock TextView --> in xml
 
     //soundpool tracking beeps
-    private SoundPool soundpool;
-    private HashMap<Integer, Integer> soundsMap;
+    public SoundPool soundpool;
+    public HashMap<Integer, Integer> soundsMap;
     //close soundpool tracking beeps
 
     //motion tracker animation settings
@@ -89,39 +89,22 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     //close motion tracker animation settings
 
 //location settings---------------------------------------------------------------------------------
-//protected static final String TAG = "location-updates-sample";
 
-    /**
-     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
-     */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; //target interval for location updates. Inexact. Updates may be more or less frequent.
 
-    /**
-     * The fastest rate for active location updates. Exact. Updates will never be more frequent
-     * than this value.
-     */
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2; //fastest rate for active location updates. Exact. Updates will never be more frequent than this value
 
     // Keys for storing activity state in the Bundle.
     protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
     protected final static String LOCATION_KEY = "location-key";
     protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
 
-    /**
-     * Provides the entry point to Google Play services.
-     */
-    protected GoogleApiClient mGoogleApiClient;
+    protected GoogleApiClient mGoogleApiClient; //entry point to Google Play services
 
-    /**
-     * Stores parameters for requests to the FusedLocationProviderApi.
-     */
-    protected LocationRequest mLocationRequest;
+    protected LocationRequest mLocationRequest; //Stores parameters for requests to the FusedLocationProviderApi
 
-    /**
-     * Represents a geographical location.
-     */
-    protected Location mCurrentLocation;
+    protected Location mCurrentLocation; //Represents a geographical location
 
     // UI Widgets.
     protected Button mStartUpdatesButton;
@@ -140,25 +123,15 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     protected String mLastUpdateTimeLabel;
     protected String distanceLabel;
 
-    /**
-     * Tracks the status of the location updates request. Value changes when the user presses the
-     * Start Updates and Stop Updates buttons.
-     */
-    protected Boolean mRequestingLocationUpdates;
+    protected Boolean mRequestingLocationUpdates; //Tracks the status of the location updates request. Value changes when the user presses the Start Updates and Stop Updates buttons
 
-    /**
-     * Time when the location was updated represented as a String.
-     */
-    protected String mLastUpdateTime;
+    protected String mLastUpdateTime; //Time when the location was updated represented as a String
 //end location settings-----------------------------------------------------------------------------
 
-
-    //private String TAG = JsonRequestActivity.class.getSimpleName();
     private String TAG = "tagger";
     private int TAGINT = 1;
     private Button btnJsonObj;
     private TextView msgResponse;
-    //private ProgressDialog pDialog;
 
     // These tags will be used to cancel the requests
     private String tag_json_obj = "jobj_req", tag_json_arry = "jarray_req";
@@ -240,8 +213,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
 
-        // Kick off the process of building a GoogleApiClient and requesting the LocationServices
-        // API.
+        // Start the process of building a GoogleApiClient and requesting the LocationServices API
         buildGoogleApiClient();
         //close location settings------------------------------------------------------------------
     } //close on create
@@ -253,6 +225,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         float volume = streamVolumeCurrent / streamVolumeMax;
         soundpool.play(soundsMap.get(sound), volume, volume, 1, -1, fSpeed); // -1 triggers infinite loop here
+    }
+    public void playSingleSound(int sound) {
+        soundpool.stop(soundsMap.get(sound));
     }
     //soundpool tracking beeps
 
@@ -289,19 +264,16 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         Log.i(TAG, "Updating values from bundle");
         if (savedInstanceState != null) {
-            // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
-            // the Start Updates and Stop Updates buttons are correctly enabled or disabled.
+            // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that the Start Updates and Stop Updates buttons are correctly enabled or disabled.
             if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(
                         REQUESTING_LOCATION_UPDATES_KEY);
                 setButtonsEnabledState();
             }
 
-            // Update the value of mCurrentLocation from the Bundle and update the UI to show the
-            // correct latitude and longitude.
+            // Update the value of mCurrentLocation from the Bundle and update the UI to show the correct latitude and longitude.
             if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
-                // Since LOCATION_KEY was found in the Bundle, we can be sure that mCurrentLocation
-                // is not null.
+                // Since LOCATION_KEY was found in the Bundle, we can be sure that mCurrentLocation is not null.
                 mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
             }
 
@@ -313,10 +285,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-    /**
-     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
-     * LocationServices API.
-     */
+
+     //Builds a GoogleApiClient. Uses the {@code #addApi} method to request the LocationServices API
     protected synchronized void buildGoogleApiClient() {
         Log.i(TAG, "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -327,39 +297,20 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         createLocationRequest();
     }
 
-    /**
-     * Sets up the location request. Android has two location request settings:
-     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
-     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
-     * the AndroidManifest.xml.
-     * <p/>
-     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
-     * interval (5 seconds), the Fused Location Provider API returns location updates that are
-     * accurate to within a few feet.
-     * <p/>
-     * These settings are appropriate for mapping applications that show real-time location
-     * updates.
-     */
+    //Sets up the location request - using ACCESS_FINE_LOCATION --> more accurate, using fused location provider API
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
 
-        // Sets the desired interval for active location updates. This interval is
-        // inexact. You may not receive updates at all if no location sources are available, or
-        // you may receive them slower than requested. You may also receive updates faster than
-        // requested if other applications are requesting location at a faster interval.
+        // Sets the desired interval for active location updates. Inexact
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
 
-        // Sets the fastest rate for active location updates. This interval is exact, and your
-        // application will never receive updates faster than this value.
+        // Sets the fastest rate for active location updates. Exact
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    /**
-     * Handles the Start Updates button and requests start of location updates. Does nothing if
-     * updates have already been requested.
-     */
+    //Handles the Start Updates button and requests start of location updates. Does nothing if updates have already been requested.
     public void startUpdatesButtonHandler(View view) {
         if (!mRequestingLocationUpdates) {
             mRequestingLocationUpdates = true;
@@ -368,10 +319,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-    /**
-     * Handles the Stop Updates button, and requests removal of location updates. Does nothing if
-     * updates were not previously requested.
-     */
+
+    //Handles the Stop Updates button, and requests removal of location updates. Does nothing if updates were not previously requested.
     public void stopUpdatesButtonHandler(View view) {
         if (mRequestingLocationUpdates) {
             mRequestingLocationUpdates = false;
@@ -380,9 +329,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-    /**
-     * Requests location updates from the FusedLocationApi.
-     */
+    //Requests location updates from the FusedLocationApi
     protected void startLocationUpdates() {
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
@@ -391,11 +338,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     }
 
-    /**
-     * Ensures that only one button is enabled at any time. The Start Updates button is enabled
-     * if the user is not requesting location updates. The Stop Updates button is enabled if the
-     * user is requesting location updates.
-     */
+    //Ensures that only one button is enabled at any time
     private void setButtonsEnabledState() {
         if (mRequestingLocationUpdates) {
             mStartUpdatesButton.setEnabled(false);
@@ -406,9 +349,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-    /**
-     * Updates the latitude, the longitude, and the last location time in the UI.
-     */
+    //Updates the latitude, the longitude, and the last location time in the UI
     private void updateUI() {
         mLatitudeTextView.setText(String.format("%s: %f", mLatitudeLabel,
                 mCurrentLocation.getLatitude()));
@@ -418,21 +359,11 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 mLastUpdateTime));
         distanceTextView.setText(String.format("%.2f %s", distance,
                 distanceLabel));
-
-//        String playaName = player1.getName();
-//        Log.i(TAG, playaName);
-        //Log.i(TAG, "Handler Update Init");
-
     }
 
-    /**
-     * Removes location updates from the FusedLocationApi.
-     */
+    //Removes location updates from the FusedLocationApi
     protected void stopLocationUpdates() {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-
+        // It is a good practice to remove location requests when the activity is in a paused or stopped state
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -830,10 +761,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     @Override
     public void onResume() {
         super.onResume();
-        // Within {@code onPause()}, we pause location updates, but leave the
-        // connection to GoogleApiClient intact.  Here, we resume receiving
-        // location updates if the user has requested them.
-
+        // Within {@code onPause()}, we pause location updates, but leave the connection to GoogleApiClient intact.  Here, we resume receiving location updates if the user has requested them
         if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             startLocationUpdates();
         }
@@ -849,6 +777,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
         gameActive = false; //stop game loop
         mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
+        soundpool.autoPause();
+        //soundpool = null; //reset soundpool
     }
 
     @Override
@@ -856,12 +786,11 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         mGoogleApiClient.disconnect();
         gameActive = false;//stop game loop
         mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
+        soundpool.autoPause();
         super.onStop();
     }
 
-    /**
-     * Runs when a GoogleApiClient object successfully connects.
-     */
+    //Runs when a GoogleApiClient object successfully connects
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "Connected to GoogleApiClient");
@@ -890,9 +819,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
     }
 
-    /**
-     * Callback that fires when the location changes.
-     */
+    //Callback that fires when the location changes
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
@@ -912,15 +839,10 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
-
-    /**
-     * Stores activity data in the Bundle.
-     */
+    //Stores activity data in the Bundle
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
@@ -971,7 +893,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             //Log.d(TAG, Double.toString(player1.getLat()));
                             updateReq(latString, lonString);
                             alienArrayRequest(2);// !!! pass in real gameID here !!!
-
                         }
                     }//end run
                 });
