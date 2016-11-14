@@ -19,8 +19,8 @@
     <string name="game_message">Enter a game name</string>
     <string name="launch_game">Launch Game</string>
     <string name="gamename_message">Game Name</string>
-    <string name="playercount_message">Player Count</string>
-    <string name="start_game">Start Game</string>
+    <string name="playercount_message">Time Limit</string>
+    <string name="start_game">Create</string>
 
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>

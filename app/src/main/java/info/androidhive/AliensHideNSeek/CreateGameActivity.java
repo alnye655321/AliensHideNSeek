@@ -2,6 +2,7 @@ package info.androidhive.AliensHideNSeek;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -38,6 +39,12 @@ public class CreateGameActivity extends Activity {
         ViewGroup layout = (ViewGroup) findViewById(R.id.activity_create_game);
         layout.addView(textView);
         layout.addView(textView1);
+
+        EditText gameNameText = (EditText) findViewById(R.id.gamename);
+        EditText playerCountText = (EditText) findViewById(R.id.playercount);
+
+        gameNameText.setHintTextColor(Color.parseColor("#FFFFFF")); //setting hint text color programmatically, unclear how in xml
+        playerCountText.setHintTextColor(Color.parseColor("#FFFFFF"));
 
     }// close onCreate()
 

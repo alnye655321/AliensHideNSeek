@@ -2,6 +2,7 @@ package info.androidhive.AliensHideNSeek;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -22,6 +23,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		btnString = (Button) findViewById(R.id.btnStringRequest);
 		btnJson = (Button) findViewById(R.id.btnJsonRequest);
+
+		EditText handleText = (EditText) findViewById(R.id.handle);
+		EditText taglineText = (EditText) findViewById(R.id.tagline);
+
+		handleText.setHintTextColor(Color.parseColor("#FFFFFF")); //setting hint text color programmatically, unclear how in xml
+		taglineText.setHintTextColor(Color.parseColor("#FFFFFF"));
 
 		// button click listeners
 		btnString.setOnClickListener(this);
