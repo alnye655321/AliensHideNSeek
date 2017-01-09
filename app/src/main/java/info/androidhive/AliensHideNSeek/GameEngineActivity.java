@@ -220,12 +220,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     } //close on create
 
     //soundpool tracking beeps
+    private int soundStreamID;
     public void playSound(int sound, float fSpeed) {
         AudioManager mgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
         float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         float volume = streamVolumeCurrent / streamVolumeMax;
-        soundpool.play(soundsMap.get(sound), volume, volume, 1, -1, fSpeed); // -1 triggers infinite loop here
+        soundStreamID = soundpool.play(soundsMap.get(sound), volume, volume, 1, -1, fSpeed); // -1 triggers infinite loop here
     }
     public void playSingleSound(int sound, float fSpeed) {
         soundpool.autoPause();
@@ -773,6 +774,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
             startLocationUpdates();
         }
         gameActive = true;//start game loop
+        playSound(1, 0.5f); //resume soundpool tracking beeps - starting at lowest frequency
     }
 
     @Override
@@ -784,7 +786,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
         gameActive = false; //stop game loop
         mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
-        soundpool.autoPause();
+        //soundpool.autoPause();
+        soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
         //soundpool = null; //reset soundpool
     }
 
@@ -794,15 +797,16 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         mGoogleApiClient.disconnect();
         gameActive = false;//stop game loop
         mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
-        soundpool.autoPause();
-        soundpool.stop(1); //stop sound - need correct stream id here
+        //soundpool.autoPause();
+        soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();  // Always call the superclass
         gameActive = false;//stop game loop
-        soundpool.autoPause(); //pause sound
+        //soundpool.autoPause(); //pause sound
+        soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
         Log.d("MYSTR", "onDestory: true");
 
         // Stop method tracing that the activity started during onCreate()
