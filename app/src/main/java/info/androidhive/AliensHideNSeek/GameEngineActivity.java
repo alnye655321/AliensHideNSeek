@@ -88,6 +88,10 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private final int mTapScreenTextAnimBreak = 1000;
     //close motion tracker animation settings
 
+    //paint test
+
+    //close paint test
+
 //location settings---------------------------------------------------------------------------------
 
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; //target interval for location updates. Inexact. Updates may be more or less frequent.
