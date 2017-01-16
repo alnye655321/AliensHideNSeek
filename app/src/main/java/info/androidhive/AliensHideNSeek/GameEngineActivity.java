@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -88,9 +89,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private final int mTapScreenTextAnimBreak = 1000;
     //close motion tracker animation settings
 
-    //paint test
 
-    //close paint test
 
 //location settings---------------------------------------------------------------------------------
 
@@ -222,6 +221,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         buildGoogleApiClient();
         //close location settings------------------------------------------------------------------
     } //close on create
+
+    //paint test
+
+
+
+    //close paint test
 
     //soundpool tracking beeps
     private int soundStreamID;
