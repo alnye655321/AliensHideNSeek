@@ -13,11 +13,10 @@ tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:scaleType="center"
-        android:adjustViewBounds="true" />
+        android:scaleType="center" />
+    <!--centers the image and disables scaling-->
 
     <TextView
     android:id="@+id/distance_text"
