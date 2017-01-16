@@ -11,11 +11,11 @@ android:background="@android:color/black"
 android:orientation="vertical"
 tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="center" />
+    <!--<ImageView-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:scaleType="center" />-->
     <!--centers the image and disables scaling-->
 
     <TextView
