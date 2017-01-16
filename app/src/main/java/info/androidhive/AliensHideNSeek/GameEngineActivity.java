@@ -86,28 +86,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private HashMap<Integer, Integer> soundsMap;
     //close soundpool tracking beeps
 
-    //motion tracker animation settings
-//    private ImageView mTapScreenTextAnimImgView;
-//    private final int[] mTapScreenTextAnimRes = {R.drawable.human001, R.drawable.human003,
-//            R.drawable.human005, R.drawable.human007, R.drawable.human009, R.drawable.human011, R.drawable.human013,
-//            R.drawable.human015, R.drawable.human017, R.drawable.human019, R.drawable.human021, R.drawable.human023,
-//            R.drawable.human025, R.drawable.human027, R.drawable.human029, R.drawable.human031, R.drawable.human033,
-//            R.drawable.human035, R.drawable.human037, R.drawable.human039, R.drawable.human041, R.drawable.human043,
-//            R.drawable.human045, R.drawable.human047, R.drawable.human049, R.drawable.human051, R.drawable.human053,
-//            R.drawable.human055, R.drawable.human057, R.drawable.human059, R.drawable.human061, R.drawable.human063,
-//            R.drawable.human065, R.drawable.human067, R.drawable.human069, R.drawable.human071, R.drawable.human073,
-//            R.drawable.human075, R.drawable.human077, R.drawable.human079, R.drawable.human081, R.drawable.human083,
-//            R.drawable.human085, R.drawable.human087, R.drawable.human089, R.drawable.human091, R.drawable.human093,
-//            R.drawable.human095, R.drawable.human097, R.drawable.human099, R.drawable.human101, R.drawable.human103,
-//            R.drawable.human105, R.drawable.human107, R.drawable.human109, R.drawable.human111, R.drawable.human113,
-//            R.drawable.human115, R.drawable.human117, R.drawable.human119, R.drawable.human001, R.drawable.human001,
-//            R.drawable.human001, R.drawable.human001};
-//    private final int mTapScreenTextAnimDuration = 30;
-//    private final int mTapScreenTextAnimBreak = 1000;
-    //close motion tracker animation settings
-
-
-
 //location settings---------------------------------------------------------------------------------
 
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; //target interval for location updates. Inexact. Updates may be more or less frequent.
@@ -264,8 +242,10 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         final int bitmapCenterX = bitmapPosDrawable.getWidth()/2; // get the center X position in image, px
         final int bitmapCenterY = bitmapPosDrawable.getHeight()/2; // get the center Y position in image, px
 
-        // create view and start draw
-        ViewGroup root = (ViewGroup) findViewById(R.id.activity_game_engine);
+
+
+        // apply view and start draw
+        ViewGroup root = (ViewGroup) findViewById(R.id.game_engine_animation);
         root.addView(mView = new View(this){
             @Override
             public void draw(Canvas canvas) {
@@ -877,7 +857,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
             stopLocationUpdates();
         }
         gameActive = false; //stop game loop
-        //mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
         //soundpool.autoPause();
         soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
         //soundpool = null; //reset soundpool
@@ -888,7 +867,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         super.onStop();
         mGoogleApiClient.disconnect();
         gameActive = false;//stop game loop
-        //mTapScreenTextAnimImgView.setImageResource(0); //reset animation image
         mThread.interrupt(); // stop motion tracker animation thread
         //soundpool.autoPause();
         soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
@@ -900,6 +878,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         gameActive = false;//stop game loop
         //soundpool.autoPause(); //pause sound
         soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
+        mThread.interrupt(); // stop motion tracker animation thread
         Log.d("MYSTR", "onDestory: true");
 
         // Stop method tracing that the activity started during onCreate()
