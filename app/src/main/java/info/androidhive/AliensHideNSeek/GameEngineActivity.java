@@ -72,6 +72,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     public double lon;
     private TextView game_clock;//create game clock TextView --> in xml
 
+    //alien player location storage array - for drawing location circles
+    private String[] alienLocations = new String[10]; //should set to user defined game size !!!
+
     //circle draw
     private static final int FRAME_DELAY = 50; // ms
 
@@ -242,7 +245,14 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         final int bitmapCenterX = bitmapPosDrawable.getWidth()/2; // get the center X position in image, px
         final int bitmapCenterY = bitmapPosDrawable.getHeight()/2; // get the center Y position in image, px
 
+        int NEcornerX = bitmapCenterX *2;
+        int NEcornerY = bitmapCenterY *2;
 
+        if(!alienStatus) {
+           //latDiff =  absVal( absVal(lat) - absVal(alienLatFromArray));
+           //lonDiff =  absVal( absVal(lon) - absVal(alienLonFromArray));
+            //add threshold distance 200ft? to lat and lon points --> translate as a percentage of getBitMapWidth()
+        }
 
         // apply view and start draw
         ViewGroup root = (ViewGroup) findViewById(R.id.game_engine_animation);
@@ -736,6 +746,9 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                                 double latStartResAlien = alien.getDouble("latstart");
                                 double lonStartResAlien = alien.getDouble("lonstart");
                                 int  gameIdResAlien = alien.getInt("game_id");
+
+                                //add to alienLocation array for circle draws
+                                alienLocations[i] = Double.toString(latResAlien) + "," + Double.toString(lonResAlien);
 
                                 double tempDistance = game1.getDistance(player1.getLat(), player1.getLon(), latResAlien, lonResAlien); //get distance from alien
                                 if(tempDistance < distance) { //if the distance is closer, update distance to send to display
