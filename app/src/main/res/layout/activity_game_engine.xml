@@ -1,159 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/activity_game_engine"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:paddingLeft="16dp"
-android:paddingRight="16dp"
-android:background="@android:color/black"
-android:orientation="vertical"
-tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_game_engine"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:background="@android:color/black"
+    android:orientation="vertical"
+    tools:context="info.androidhive.AliensHideNSeek.GameEngineActivity">
 
     <!--<ImageView-->
-        <!--android:id="@+id/imageView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:scaleType="center" />-->
+    <!--android:id="@+id/imageView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:scaleType="center" />-->
     <!--centers the image and disables scaling-->
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight = "3"
-        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
         android:id="@+id/game_engine_animation"
         android:paddingLeft="16dp"
         android:paddingRight="16dp" >
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp" >
 
-    <TextView
-    android:id="@+id/distance_text"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:textColor="#ff0000"
-    android:background="#6E9ADB"
-    android:textSize="@dimen/large_text_size" />
-
-    <TextView
-        android:id="@+id/timer_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#ff0000"
-        android:background="#6E9ADB"
-        android:textSize="@dimen/large_text_size" />
-
-    <TextView
-        android:id="@+id/latitude_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/longitude_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/last_update_time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginStart="@dimen/small_margin"
-        android:textSize="@dimen/default_text_size"
-        android:visibility="gone"/>
-
-
-
-
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:max="10"
-        android:padding="4dip" >
-    </ProgressBar>
-
-    <Button
-        android:id="@+id/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="startProgress"
-        android:text="Start Game" >
-    </Button>
-
-    <Button
-        android:id="@+id/stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom|left"
-        android:text="Leave Game"
-        android:onClick="leaveGame"
-        android:visibility="gone">
-    </Button>
-
-    <TextView
-        android:id="@+id/game_over"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#ff0000"
-        android:background="#6E9ADB"
-        android:gravity="bottom|center"
-        android:visibility="gone"
-        android:text="Game Over - You Have Lost"
-        android:textSize="@dimen/large_text_size" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/start_updates_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <TextView
+            android:id="@+id/distance_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:gravity="center"
-            android:onClick="startUpdatesButtonHandler"
-            android:text="@string/start_updates"
-            android:visibility="gone"/>
+            android:layout_gravity="center_horizontal"
+            android:textColor="#ff0000"
+            android:background="#6E9ADB"
+            android:textSize="@dimen/large_text_size" />
 
-        <Button
-            android:id="@+id/stop_updates_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <TextView
+            android:id="@+id/timer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#ff0000"
+            android:background="#6E9ADB"
+            android:textSize="@dimen/large_text_size" />
+
+        <TextView
+            android:id="@+id/latitude_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/small_margin"
             android:layout_marginStart="@dimen/small_margin"
-            android:enabled="false"
-            android:gravity="center"
-            android:onClick="stopUpdatesButtonHandler"
-            android:text="@string/stop_updates"
+            android:textSize="@dimen/default_text_size"
             android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/longitude_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_marginStart="@dimen/small_margin"
+            android:textSize="@dimen/default_text_size"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/last_update_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_marginStart="@dimen/small_margin"
+            android:textSize="@dimen/default_text_size"
+            android:visibility="gone"/>
+
+
+
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:max="10"
+            android:padding="4dip" >
+        </ProgressBar>
+
+            <Button
+                android:id="@+id/start_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="startProgress"
+                android:text="Start Game" >
+            </Button>
+
+            <Button
+                android:id="@+id/stop_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Leave Game"
+                android:onClick="leaveGame"
+                android:visibility="gone">
+            </Button>
+
+            <Button
+                android:id="@+id/stopAudio_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="stopAudio"
+                android:text="Stop Audio"
+                android:layout_toRightOf="@+id/start_button"
+                android:layout_toEndOf="@+id/start_button">
+            </Button>
+
+            <Button
+                android:id="@+id/startAudio_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Audio"
+                android:onClick="startAudio"
+                android:visibility="gone"
+                android:layout_toRightOf="@+id/start_button"
+                android:layout_toEndOf="@+id/start_button">
+            </Button>
+
+
+
+        <TextView
+            android:id="@+id/game_over"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ff0000"
+            android:background="#6E9ADB"
+            android:gravity="bottom|center"
+            android:visibility="gone"
+            android:text="Game Over - You Have Lost"
+            android:textSize="@dimen/large_text_size" />
     </LinearLayout>
 
-</LinearLayout>
+
+</RelativeLayout>
+
+
+<!--<LinearLayout-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:baselineAligned="false"-->
+<!--android:orientation="horizontal">-->
+
+<!--<Button-->
+    <!--android:id="@+id/start_updates_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="10dp"-->
+    <!--android:layout_marginRight="10dp"-->
+    <!--android:gravity="center"-->
+    <!--android:onClick="startUpdatesButtonHandler"-->
+    <!--android:text="@string/start_updates"-->
+    <!--android:visibility="gone"/>-->
+
+<!--<Button-->
+    <!--android:id="@+id/stop_updates_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/small_margin"-->
+    <!--android:layout_marginStart="@dimen/small_margin"-->
+    <!--android:enabled="false"-->
+    <!--android:gravity="center"-->
+    <!--android:onClick="stopUpdatesButtonHandler"-->
+    <!--android:text="@string/stop_updates"-->
+    <!--android:visibility="gone"/>-->
+<!--</LinearLayout>-->

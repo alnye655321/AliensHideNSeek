@@ -117,6 +117,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     protected TextView gameOverTextView;
     protected Button startButton;
     protected Button stopButton;
+    protected Button stopAudioButton;
+    protected Button startAudioButton;
 
     // Labels.
     protected String mLatitudeLabel;
@@ -198,8 +200,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         }
         //location settings------------------------------------------------------------------------
         // Locate the UI widgets.
-        mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
-        mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
+        //mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
+        //mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
         mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
@@ -207,6 +209,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         gameOverTextView = (TextView) findViewById(R.id.game_over);
         startButton = (Button) findViewById(R.id.start_button);
         stopButton = (Button) findViewById(R.id.stop_button);
+        stopAudioButton = (Button) findViewById(R.id.stopAudio_button);
+        startAudioButton = (Button) findViewById(R.id.startAudio_button);
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -250,11 +254,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         final int bitmapCenterX = bitmapPosDrawable.getWidth()/2; // get the center X position in image, px
         final int bitmapCenterY = bitmapPosDrawable.getHeight()/2; // get the center Y position in image, px
 
-        int NEcornerX = bitmapCenterX *2;
-        int NEcornerY = bitmapCenterY *2;
-
-
-
         // apply view and start draw
         ViewGroup root = (ViewGroup) findViewById(R.id.game_engine_animation);
         root.addView(mView = new View(this){
@@ -262,14 +261,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
             public void draw(Canvas canvas) {
                 canvas.drawBitmap(mBitmaps.get(Math.abs(mBitmapIndex.get() % mBitmaps.size())), 10, 10, null); //png animation
                 super.draw(canvas);
-//Bitmap bitmap = mBitmaps.get(Math.abs(mBitmapIndex.get()));
+
                 //circle draws
                 Paint paint = new Paint();
                 paint.setStyle(Paint.Style.FILL);
                 int paintColor = Color.parseColor("#446ef8");
                 paint.setColor(paintColor);
-                //paint.setARGB(a, r, g, b);
-                canvas.drawCircle(bitmapCenterX, bitmapCenterY, 25, paint); //currently x and y are placing in center screen
+                //canvas.drawCircle(bitmapCenterX, bitmapCenterY, 25, paint); //currently x and y are placing in center screen
 
                 // host --> drawing all the alien gps locations
                 if(!alienStatus) {
@@ -298,12 +296,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         });
         //close circle draw loading-----------------------------------------------------------------
     } //close on create-----------------------------------------------------------------------------
-
-    //paint test
-
-
-
-    //close paint test
 
     //soundpool tracking beeps
     private int soundStreamID;
@@ -348,6 +340,20 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         playSound(1, 0.5f); //soundpool tracking beeps - starting at lowest frequency
     }
     //close start game
+
+    // stop audio from activity button click
+    public void stopAudio(View view){
+        soundpool.stop(soundStreamID); //stop sound - by streamID created by soundpool loop
+        stopAudioButton.setVisibility(View.GONE); //switch the buttons
+        startAudioButton.setVisibility(View.VISIBLE);
+    }
+
+    // start audio from activity button click
+    public void startAudio(View view){
+        playSound(1, 0.5f); //resume soundpool tracking beeps - starting at lowest frequency
+        startAudioButton.setVisibility(View.GONE); //switch the buttons
+        stopAudioButton.setVisibility(View.VISIBLE);
+    }
 
     //location methods------------------------------------------------------------------------------
     /**
