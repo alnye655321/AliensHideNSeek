@@ -17,6 +17,7 @@ public class CreateGameActivity extends Activity {
     public final static String HANDLE_MESSAGE = "handle";
     public final static String TAGLINE_MESSAGE = "tagline";
     public final static String GAME_MESSAGE = "gameMessage";
+    public final static String COUNT_MESSAGE = "countMessage";
 
 
     @Override
@@ -52,10 +53,13 @@ public class CreateGameActivity extends Activity {
         //Log.d(TAG, EXTRA_MESSAGE);
         Intent gameEngineStart = new Intent(this, GameEngineActivity.class);
         EditText gameText = (EditText) findViewById(R.id.gamename);
+        EditText playerCountVal = (EditText) findViewById(R.id.playercount);
         String gameMessage = gameText.getText().toString();
+        String playerCountString = playerCountVal.getText().toString();
         gameEngineStart.putExtra(GAME_MESSAGE, gameMessage);
         gameEngineStart.putExtra(TAGLINE_MESSAGE, taglineMessage);
         gameEngineStart.putExtra(HANDLE_MESSAGE, handleMessage);
+        gameEngineStart.putExtra(COUNT_MESSAGE, playerCountString);
         startActivity(gameEngineStart);
     }
 
