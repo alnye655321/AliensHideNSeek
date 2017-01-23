@@ -54,4 +54,34 @@ public class Environment extends Game {
         }
     }
 
+    // figures out where to plot gps markers on the animated motion tracker bitmap
+    public double[] plotGPSpoint(double humanLat, double humanLon, double alienLat, double alienLon, int bitmapRadiusX, int bitmapRadiusY){
+        double[] xyPair = new double[2];
+
+        double latDiff = Math.abs(humanLat - alienLat);
+        double lonDiff = Math.abs(humanLon - alienLon);
+
+        double lonPercent = lonDiff / 0.0009; // .0009 is about a 100m distance in degrees, will need to alter with a function if close to poles
+        double latPercent = latDiff / 0.0009;
+
+        double xVal = lonPercent * bitmapRadiusX;
+        double yVal = latPercent * bitmapRadiusY;
+
+        if (alienLon > humanLon){
+            xyPair[0] = bitmapRadiusX + xVal;
+        }
+        else {
+            xyPair[0] = bitmapRadiusX - xVal;
+        }
+
+        if (alienLat > humanLat){
+            xyPair[1] = bitmapRadiusY + yVal;
+        }
+        else {
+            xyPair[1] = bitmapRadiusY - yVal;
+        }
+
+        return xyPair; // format --> x[0], y[1]
+    }
+
 }

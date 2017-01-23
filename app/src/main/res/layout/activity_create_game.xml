@@ -49,6 +49,13 @@ tools:context="info.androidhive.AliensHideNSeek.CreateGameActivity">
     android:singleLine="true"
     android:hint="@string/playercount_message"/>
 
+    <!--<EditText android:id="@+id/timelimit"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textColor="#FFFFFF"-->
+        <!--android:singleLine="true"-->
+        <!--android:hint="@string/timelimit_message"/>-->
+
 <Button
     android:layout_width="100dp"
     android:layout_height="wrap_content"

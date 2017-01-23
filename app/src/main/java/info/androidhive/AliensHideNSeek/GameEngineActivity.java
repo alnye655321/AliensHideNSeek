@@ -153,6 +153,11 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
         String taglineMessage = intent.getStringExtra(CreateGameActivity.TAGLINE_MESSAGE);
         String gameMessage = intent.getStringExtra(CreateGameActivity.GAME_MESSAGE);
+        String playerCountString = intent.getStringExtra(CreateGameActivity.COUNT_MESSAGE);
+
+        if (!alienStatus) {
+            int playerCount = Integer.parseInt(playerCountString); // convert user supplied player count value to integer
+        }
 
         TextView textView = new TextView(this);
         textView.setTextSize(40);
@@ -248,11 +253,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         int NEcornerX = bitmapCenterX *2;
         int NEcornerY = bitmapCenterY *2;
 
-        if(!alienStatus) {
-           //latDiff =  absVal( absVal(lat) - absVal(alienLatFromArray));
-           //lonDiff =  absVal( absVal(lon) - absVal(alienLonFromArray));
-            //add threshold distance 200ft? to lat and lon points --> translate as a percentage of getBitMapWidth()
-        }
+
 
         // apply view and start draw
         ViewGroup root = (ViewGroup) findViewById(R.id.game_engine_animation);
@@ -269,6 +270,30 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                 paint.setColor(paintColor);
                 //paint.setARGB(a, r, g, b);
                 canvas.drawCircle(bitmapCenterX, bitmapCenterY, 25, paint); //currently x and y are placing in center screen
+
+                // host --> drawing all the alien gps locations
+                if(!alienStatus) {
+                    for (int i = 0; i < alienLocations.length; i++) {
+                        if (alienLocations[i] != null) {
+                            String gpsString = alienLocations[i];
+                            String[] parts = gpsString.split(",");
+                            double alienLatitude = Double.parseDouble(parts[0]);
+                            double alienLongitude = Double.parseDouble(parts[1]);
+                            double[] gpsPtsXY = game1.plotGPSpoint(player1.getLat(), player1.getLon(), alienLatitude, alienLongitude, bitmapCenterX, bitmapCenterY);
+                            float xFloat = (float) gpsPtsXY[0];
+                            float yFloat = (float) gpsPtsXY[1];
+                            canvas.drawCircle(xFloat, yFloat, 25, paint);
+                        }
+                    }
+                }
+
+                //alien --> drawing only host gps location
+                if (alienStatus && player1.getLat() != 0 &&  player1.getLon() != 0){
+                    double[] gpsPtsXY = game1.plotGPSpoint(player2.getLat(), player2.getLon(), player1.getLat(), player1.getLon(), bitmapCenterX, bitmapCenterY);
+                    float xFloat = (float) gpsPtsXY[0];
+                    float yFloat = (float) gpsPtsXY[1];
+                    canvas.drawCircle(xFloat, yFloat, 25, paint);
+                }
             }
         });
         //close circle draw loading-----------------------------------------------------------------
@@ -467,9 +492,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                         try {
                             int gameId = response.getInt("gameId");
                             int playerId = response.getInt("playerId");
-                            //TAGINT
                             //Log.d("MYINT", "value: " + gameId);
-                            //Log.d("MYINT", "value: " + playerId);
+
                             player1.setGameId(gameId); //define player properties from server response
                             player1.setPlayerId(playerId);
                             game1.setGameId(gameId);
@@ -523,16 +547,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Log.d(TAG, response.toString());
-                        Log.d(TAG, response.toString());
 
                         try {
                             // Parsing json object response
                             // response will be a json object
                             String startStatus = response.getString("startStatus"); //set response values
                             String updateStatus = response.getString("updateStatus");
-                            Log.d(TAG, startStatus);
-                            Log.d(TAG, updateStatus);
+
                             if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
                                 player1.setCheckStart("false");
                             }
@@ -656,10 +677,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             String updateStatus = response.getString("updateStatus");
                             Double humanLatRes = response.getDouble("humanLat");
                             Double humanLonRes = response.getDouble("humanLon");
-                            //Log.d(TAG, startStatus);
-                            //Log.d(TAG, updateStatus);
-                            Log.d("MYINT", "Human Lat Response: " + humanLatRes);
-                            Log.d("MYINT", "Human Lon Response: " + humanLonRes);
+                            player1.setLat(humanLatRes);
+                            player1.setLon(humanLonRes);
                             if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
                                 player2.setCheckStart("false");
                             }
@@ -989,10 +1008,8 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             String latString = Double.toString(player2.getLat());
                             String lonString = Double.toString(player2.getLon());
                             Log.d(TAG, latString);
-                            //Log.d(TAG, lonString);
                             updateAlienReq(latString, lonString);
                             Log.d(TAG, Double.toString(lat));
-                            //Log.d(TAG, Double.toString(player1.getLat()));
 
                         }
                         else{ // human/host game
@@ -1003,10 +1020,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             player1.setLon(lon);
                             String latString = Double.toString(player1.getLat());
                             String lonString = Double.toString(player1.getLon());
-                            //Log.d(TAG, latString);
-                            //Log.d(TAG, lonString);
-                            //Log.d(TAG, Double.toString(lat));
-                            //Log.d(TAG, Double.toString(player1.getLat()));
                             updateReq(latString, lonString);
                             alienArrayRequest(2);// !!! pass in real gameID here !!!
                         }
