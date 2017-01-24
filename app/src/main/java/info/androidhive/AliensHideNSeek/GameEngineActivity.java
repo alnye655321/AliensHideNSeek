@@ -280,7 +280,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             double[] gpsPtsXY = game1.plotGPSpoint(player1.getLat(), player1.getLon(), alienLatitude, alienLongitude, bitmapCenterX, bitmapCenterY);
                             float xFloat = (float) gpsPtsXY[0];
                             float yFloat = (float) gpsPtsXY[1];
-                            canvas.drawCircle(xFloat, yFloat, 25, paint);
+                            canvas.drawCircle(xFloat, yFloat, 20, paint);
                         }
                     }
                 }
@@ -290,7 +290,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                     double[] gpsPtsXY = game1.plotGPSpoint(player2.getLat(), player2.getLon(), player1.getLat(), player1.getLon(), bitmapCenterX, bitmapCenterY);
                     float xFloat = (float) gpsPtsXY[0];
                     float yFloat = (float) gpsPtsXY[1];
-                    canvas.drawCircle(xFloat, yFloat, 25, paint);
+                    canvas.drawCircle(xFloat, yFloat, 20, paint);
                 }
             }
         });
