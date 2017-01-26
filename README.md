@@ -17,4 +17,4 @@ Sound is another important feature that increases the tension of the game. I inc
 ## Technology
 Client: Android Java Application
 
-Server: Node.js API
+Server: [Node.js API](https://github.com/alnye655321/aliensAPI)
