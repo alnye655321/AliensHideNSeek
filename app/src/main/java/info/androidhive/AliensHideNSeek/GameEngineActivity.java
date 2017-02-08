@@ -29,18 +29,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonArrayRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,11 +43,9 @@ import android.graphics.Paint;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import info.androidhive.AliensHideNSeek.app.AppController;
-import info.androidhive.AliensHideNSeek.utils.Const;
 
 public class GameEngineActivity extends Activity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-    //private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
+
     public boolean alienStatus; //global truth of player type
     public double distance = 666; //global distance to/from human/alien - set to default high number will lower on first updateReq()
     Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
@@ -73,22 +59,16 @@ public class GameEngineActivity extends Activity implements ConnectionCallbacks,
     public double lon;
     private TextView game_clock;//create game clock TextView --> in xml
 
-    //alien player location storage array - for drawing location circles
-    //private String[] alienLocations = new String[10]; //should set to user defined game size !!!
-
     //circle draw
     private static final int FRAME_DELAY = 50; // ms
-
     private ArrayList<Bitmap> mBitmaps;
     private final AtomicInteger mBitmapIndex = new AtomicInteger();
     private View mView;
     private Thread mThread;
-    //close circle draw
 
     //soundpool tracking beeps
     private SoundPool soundpool;
     private HashMap<Integer, Integer> soundsMap;
-    //close soundpool tracking beeps
 
 //location settings---------------------------------------------------------------------------------
 
@@ -133,11 +113,7 @@ public class GameEngineActivity extends Activity implements ConnectionCallbacks,
 //end location settings-----------------------------------------------------------------------------
 
     private String TAG = "tagger";
-    private int TAGINT = 1;
     private TextView msgResponse;
-
-    // These tags will be used to cancel the requests
-    private String tag_json_obj = "jobj_req", tag_json_arry = "jarray_req";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,11 +161,6 @@ public class GameEngineActivity extends Activity implements ConnectionCallbacks,
         soundsMap = new HashMap<Integer, Integer>();
         soundsMap.put(1, soundpool.load(this, R.raw.short_beep, 1));
         soundsMap.put(2, soundpool.load(this, R.raw.short_beep, 1));
-        //close soundpool tracking beeps
-
-        //start motion tracker animation
-        //mTapScreenTextAnimImgView = (ImageView) findViewById(R.id.imageView);
-        //new SceneAnimation(mTapScreenTextAnimImgView, mTapScreenTextAnimRes, mTapScreenTextAnimDuration, mTapScreenTextAnimBreak);
 
         // initial http reqs to create game in API
         if(alienStatus) {
@@ -340,7 +311,7 @@ public class GameEngineActivity extends Activity implements ConnectionCallbacks,
             playSound(1, 1.6f);
         }
     }
-    //soundpool tracking beeps
+    //close soundpool tracking beeps
 
 
     //start game - create new game thread, audio, location updates
