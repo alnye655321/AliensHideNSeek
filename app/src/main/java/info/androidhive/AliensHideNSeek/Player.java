@@ -74,8 +74,38 @@ public class Player {
         this.id = id;
     }
 
-    //method to run an update on location -->  add to game event loop
-    //should be grabbing android sensor values here
-    //possibly a put request to api server as well
+    //get distance between stationary human and alien(s), should be
+    //running frequently in a game event loop. !!! In km !!!
+    public double calcDistance(double humanLat, double humanLon, double alienLat, double alienLon) {
+
+        double d2r = Math.PI / 180;
+        double distance = 0;
+
+
+        double dlong = (alienLon - humanLon) * d2r;
+        double dlat = (alienLat - humanLat) * d2r;
+        double a =
+                Math.pow(Math.sin(dlat / 2.0), 2)
+                        + Math.cos(humanLat * d2r)
+                        * Math.cos(alienLat * d2r)
+                        * Math.pow(Math.sin(dlong / 2.0), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = 6367 * c;
+        System.out.println(d);
+        return d;
+    }
+
+    //game over check if alien gets close enough (on top of) human --> game over
+    //should change this to meters, along with above distance func. !!! Currently .01 km !!!
+    public int gameWinnerCheck(int humanPlayerId, int alienPlayerId, double humanLat, double humanLon, double alienLat, double alienLon) {
+        int winner;
+        if(calcDistance(humanLat, humanLon, alienLat, alienLon) < .015 ){
+            winner = alienPlayerId;
+            return winner;
+        }
+        else{
+            return -1;
+        }
+    }
 
 }
