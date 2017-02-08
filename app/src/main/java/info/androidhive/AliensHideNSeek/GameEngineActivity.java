@@ -58,13 +58,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import info.androidhive.AliensHideNSeek.app.AppController;
 import info.androidhive.AliensHideNSeek.utils.Const;
 
-public class GameEngineActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class GameEngineActivity extends Activity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     //private boolean alien = false; //determine which game engine to run based on previous activity - alien || human player
     public boolean alienStatus; //global truth of player type
     public double distance = 666; //global distance to/from human/alien - set to default high number will lower on first updateReq()
     Human player1 = new Human("Military","Colonel Hicks","Kickass",0,0,0,0);
     Alien player2 = new Alien("Crawler","Xenomorph","Humans R Tasty",0,0,0,0);
     Environment game1 = new Environment("Default",300000,8); // 300000ms = 5mins !!! 8 = max players --> should be user set
+    //game1.setGameId(2);
     private boolean gameActive = true; //!!! active game state - controls engine loop at bottom !!!
     public Handler handler;
     public ProgressBar progressBar; //no longer using from thread example
@@ -73,7 +74,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
     private TextView game_clock;//create game clock TextView --> in xml
 
     //alien player location storage array - for drawing location circles
-    private String[] alienLocations = new String[10]; //should set to user defined game size !!!
+    //private String[] alienLocations = new String[10]; //should set to user defined game size !!!
 
     //circle draw
     private static final int FRAME_DELAY = 50; // ms
@@ -133,7 +134,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
     private String TAG = "tagger";
     private int TAGINT = 1;
-    private Button btnJsonObj;
     private TextView msgResponse;
 
     // These tags will be used to cancel the requests
@@ -191,12 +191,12 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         //mTapScreenTextAnimImgView = (ImageView) findViewById(R.id.imageView);
         //new SceneAnimation(mTapScreenTextAnimImgView, mTapScreenTextAnimRes, mTapScreenTextAnimDuration, mTapScreenTextAnimBreak);
 
+        // initial http reqs to create game in API
         if(alienStatus) {
-            createNewAlien(); //adds to players database
-            Log.d("MYSTR", "Alien Created!");
+            player2.createNewAlien(handleMessage, taglineMessage); //adds to player to API
         }
         else {
-            createNewGame(); //only run as human
+            player1.createNewGame(gameMessage, handleMessage, taglineMessage); //only run as human
         }
         //location settings------------------------------------------------------------------------
         // Locate the UI widgets.
@@ -271,6 +271,7 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
 
                 // host --> drawing all the alien gps locations
                 if(!alienStatus) {
+                    String[] alienLocations = player1.getAlienLocations();
                     for (int i = 0; i < alienLocations.length; i++) {
                         if (alienLocations[i] != null) {
                             String gpsString = alienLocations[i];
@@ -314,6 +315,30 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         float volume = streamVolumeCurrent / streamVolumeMax;
         soundpool.play(soundsMap.get(sound), volume, volume, 1, 0, fSpeed); // 0 is single sound
+    }
+    // control frequecy of audio beeps based on distance
+    private void soundPlayer(double distanceFromTarget){
+        if(distanceFromTarget > 150){
+            playSound(1, 0.5f);
+        }
+        else if(distanceFromTarget > 125){
+            playSound(1, 0.7f);
+        }
+        else if(distanceFromTarget > 100){
+            playSound(1, 0.9f);
+        }
+        else if(distanceFromTarget > 75){
+            playSound(1, 1.0f);
+        }
+        else if(distanceFromTarget > 50){
+            playSound(1, 1.2f);
+        }
+        else if(distanceFromTarget > 25){
+            playSound(1, 1.4f);
+        }
+        else if(distanceFromTarget > 0){
+            playSound(1, 1.6f);
+        }
     }
     //soundpool tracking beeps
 
@@ -469,384 +494,6 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
     //end location methods--------------------------------------------------------------------------
-
-     //JSON POST Req - Create New Game with Host Player---------run in onCreate()-------------------
-    private void createNewGame() {
-
-        Intent intent = getIntent(); //get host submitted values from previous activity --> CreateGameActivity
-        String gameMessage = intent.getStringExtra(CreateGameActivity.GAME_MESSAGE);
-        String handleMessage = intent.getStringExtra(CreateGameActivity.HANDLE_MESSAGE);
-        String taglineMessage = intent.getStringExtra(CreateGameActivity.TAGLINE_MESSAGE);
-        String tag_json_obj = "json_obj_req";
-
-        String url = "http://node.nyedigital.com/game";
-
-        Map<String, String> params = new HashMap();// object payload values
-        params.put("name", gameMessage);
-        params.put("handle", handleMessage);
-        params.put("tagline", taglineMessage);
-
-        JSONObject parameters = new JSONObject(params);//create object payload String type, int id, int timeLimit, int players
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, parameters,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Log.d(TAG, response.toString());
-                        try {
-                            int gameId = response.getInt("gameId");
-                            int playerId = response.getInt("playerId");
-                            //Log.d("MYINT", "value: " + gameId);
-
-                            player1.setGameId(gameId); //define player properties from server response
-                            player1.setPlayerId(playerId);
-                            game1.setGameId(gameId);
-                            Log.d("MYINT", "value: " + game1.getGameId());
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-            }
-        }) {
-
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("name", "Android");
-
-//                return params;
-//            }
-        };
-
-// Add req to queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
-    } //JSON POST Req - Create New Game with Host Player--------------------------------------------
-
-    //JSON POST Req - Human Continuous Update-------------------------------------------------------------
-    private void updateReq(String lat, String lon) {
-// Tag used to cancel the request
-
-        String tag_json_obj = "update_json_obj_req";
-
-        String url = "http://node.nyedigital.com/update/human";
-
-        Map<String, String> params = new HashMap();// object payload values
-        params.put("id", "3");
-        params.put("lat", lat);
-        params.put("lon", lon);
-        params.put("checkStart", player1.getCheckStart());
-        params.put("gameId", "2");
-
-        JSONObject parameters = new JSONObject(params);//create object payload
-
-        JsonObjectRequest updateObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, parameters,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            // Parsing json object response
-                            // response will be a json object
-                            String startStatus = response.getString("startStatus"); //set response values
-                            String updateStatus = response.getString("updateStatus");
-
-                            if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
-                                player1.setCheckStart("false");
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-            }
-        }) {
-// optional params
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("name", "Android");
-
-//                return params;
-//            }
-        };
-
-// Add req to queue
-        AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
-    } //JSON POST Req - Human Continuous Update-----------------------------------------------------
-
-    //JSON POST Req - Create Alien Player----------run in onCreate()--------------------------------
-    private void createNewAlien() {
-
-        Intent intent = getIntent(); //get alien submitted values from previous activity --> JoinGameActivity
-        String handleMessage = intent.getStringExtra(JoinGameActivity.HANDLE_MESSAGE);
-        String taglineMessage = intent.getStringExtra(JoinGameActivity.TAGLINE_MESSAGE);
-        String tag_json_obj = "json_obj_req";
-        String gameIdMessage = "2"; //manual entry !!! need to set from previous alien lobby screen
-
-        String url = "http://node.nyedigital.com/alien";
-
-        Map<String, String> params = new HashMap();// object payload values
-        params.put("handle", handleMessage);
-        params.put("tagline", taglineMessage);
-        params.put("gameId", gameIdMessage);
-
-        JSONObject parameters = new JSONObject(params);//create object payload String type, int id, int timeLimit, int players
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, parameters,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Log.d(TAG, response.toString());
-                        try {
-                            int gameId = 2; //manual entry !!! need to set from previous alien lobby screen
-                            int playerId = response.getInt("playerId");
-                            //TAGINT
-                            //Log.d("MYINT", "value: " + gameId);
-                            //Log.d("MYINT", "value: " + playerId);
-                            player2.setGameId(gameId); //define player properties from server response
-                            player2.setPlayerId(playerId);
-                            game1.setGameId(gameId);
-                            Log.d("MYINT", "AlienPlayerId Value: " + playerId);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-            }
-        }) {
-
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("name", "Android");
-
-//                return params;
-//            }
-        };
-
-// Add req to queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
-    } //JSON POST Req - Create New Alien Player-----------------------------------------------------
-
-    //JSON POST Req - Alien Continuous Update-------------------------------------------------------
-    private void updateAlienReq(String lat, String lon) {
-
-        String tag_json_obj = "json_obj_req";
-
-        String url = "http://node.nyedigital.com/update/alien";
-        String gameIdString = Integer.toString(player2.getGameId());
-
-        Map<String, String> params = new HashMap();// object payload values
-        params.put("id", "2");
-        params.put("lat", lat);
-        params.put("lon", lon);
-        params.put("checkStart", player2.getCheckStart());
-        params.put("gameId", gameIdString);
-
-        JSONObject parameters = new JSONObject(params);//create object payload
-
-        JsonObjectRequest updateObjReq = new JsonObjectRequest(Request.Method.POST,
-                url, parameters,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Log.d(TAG, response.toString());
-                        Log.d(TAG, response.toString());
-
-                        try {
-                            // Parsing json object response
-                            // response will be a json object
-                            String startStatus = response.getString("startStatus"); //set response values
-                            String updateStatus = response.getString("updateStatus");
-                            Double humanLatRes = response.getDouble("humanLat");
-                            Double humanLonRes = response.getDouble("humanLon");
-                            player1.setLat(humanLatRes);
-                            player1.setLon(humanLonRes);
-                            if (startStatus == "complete"){ //check for a complete response, then set object to false to stop sending request !!! refactor to using private boolean
-                                player2.setCheckStart("false");
-                            }
-
-                            double tempDistance = game1.getDistance(humanLatRes, humanLonRes, player2.getLat(), player2.getLon()); //get distance from human
-                            distance = tempDistance * 1000; //update distance to send to display
-
-                            //soundpool tracking beeps
-                            if(distance > 150){
-                                playSound(1, 0.5f);
-                            }
-                            else if(distance > 125){
-                                playSound(1, 0.7f);
-                            }
-                            else if(distance > 100){
-                                playSound(1, 0.9f);
-                            }
-                            else if(distance > 75){
-                                playSound(1, 1.0f);
-                            }
-                            else if(distance > 50){
-                                playSound(1, 1.2f);
-                            }
-                            else if(distance > 25){
-                                playSound(1, 1.4f);
-                            }
-                            else if(distance > 0){
-                                playSound(1, 1.6f);
-                            }
-                            //close soundpool tracking beeps
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-            }
-        }) {
-// optional params
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("name", "Android");
-
-//                return params;
-//            }
-        };
-
-// Add req to queue
-        AppController.getInstance().addToRequestQueue(updateObjReq, tag_json_obj);
-    } //JSON POST Req - Alien Continuous Update-----------------------------------------------------
-
-    //alien enemy location call continuous update - for host ---------------------------------------
-    //create array beforehand - set for
-    private void alienArrayRequest(int gameId) {
-
-        String urlJsonArry = "http://node.nyedigital.com/aliens/" + gameId;
-
-
-        JsonArrayRequest alienReq = new JsonArrayRequest(urlJsonArry,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, response.toString());
-
-                        try {
-                            // Parsing json array response, loop through each json object
-
-                            for (int i = 0; i < response.length(); i++) {
-
-                                JSONObject alien = (JSONObject) response
-                                        .get(i);
-
-                                int idResAlien = alien.getInt("id");
-                                String handleResAlien = alien.getString("handle");
-                                String taglineResAlien = alien.getString("tagline");
-                                boolean humanResAlien = alien.getBoolean("human");
-                                double latResAlien = alien.getDouble("lat");
-                                double lonResAlien = alien.getDouble("lon");
-                                double latStartResAlien = alien.getDouble("latstart");
-                                double lonStartResAlien = alien.getDouble("lonstart");
-                                int  gameIdResAlien = alien.getInt("game_id");
-
-                                //add to alienLocation array for circle draws
-                                alienLocations[i] = Double.toString(latResAlien) + "," + Double.toString(lonResAlien);
-
-                                double tempDistance = game1.getDistance(player1.getLat(), player1.getLon(), latResAlien, lonResAlien); //get distance from alien
-                                if(tempDistance < distance) { //if the distance is closer, update distance to send to display
-                                    distance = tempDistance * 1000;
-
-                                    //soundpool tracking beeps
-                                    if(distance > 150){
-                                        playSound(1, 0.5f);
-                                    }
-                                    else if(distance > 125){
-                                        playSound(1, 0.7f);
-                                    }
-                                    else if(distance > 100){
-                                        playSound(1, 0.9f);
-                                    }
-                                    else if(distance > 75){
-                                        playSound(1, 1.0f);
-                                    }
-                                    else if(distance > 50){
-                                        playSound(1, 1.2f);
-                                    }
-                                    else if(distance > 25){
-                                        playSound(1, 1.4f);
-                                    }
-                                    else if(distance > 0){
-                                        playSound(1, 1.6f);
-                                    }
-                                    //close soundpool tracking beeps
-                                }
-
-                                //check if alien has captured human - ie. occupy same gps location --> Game Over
-                                int checkAlienWin = game1.gameWinnerCheck(player1.getId(), idResAlien, player1.getLat(), player1.getLon(), latResAlien, lonResAlien);
-                                Log.d("MYINT", "WinnerCheck: " + checkAlienWin);
-                                if (checkAlienWin != -1){
-                                    Log.d("MYINT", "AlienGameWinnerIS: " + checkAlienWin);
-                                    game1.setActive(false);
-                                    gameOverTextView.setVisibility(View.VISIBLE);
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(),
-                                    "Error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(alienReq);
-    }
-    //alien enemy location call continuous update for host-s-----------------------------------------
-
-    public void onClick(View v) { //for json obj buttons
-        switch (v.getId()) {
-            case R.id.btnJsonObj:
-                createNewGame();
-                break;
-            case R.id.btnJsonArray:
-                //makeJsonArryReq();
-                break;
-        }
-
-    }
-
 
     @Override
     protected void onStart() {
@@ -1013,9 +660,13 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             player2.setLon(lon);
                             String latString = Double.toString(player2.getLat());
                             String lonString = Double.toString(player2.getLon());
+                            player1.setLat(player2.getHumanLatRes());
+                            player1.setLon(player2.getHumanLonRes());
                             Log.d(TAG, latString);
-                            updateAlienReq(latString, lonString);
+                            player2.updateAlienReq(latString, lonString, 2);
                             Log.d(TAG, Double.toString(lat));
+                            distance = player2.getDistance();
+                            soundPlayer(distance); //soundpool tracking beeps
 
                         }
                         else{ // human/host game
@@ -1026,8 +677,19 @@ public class GameEngineActivity extends Activity implements OnClickListener, Con
                             player1.setLon(lon);
                             String latString = Double.toString(player1.getLat());
                             String lonString = Double.toString(player1.getLon());
-                            updateReq(latString, lonString);
-                            alienArrayRequest(2);// !!! pass in real gameID here !!!
+                            player1.updateReq(latString, lonString);
+                            player1.alienArrayRequest(2);// !!! pass in real gameID here !!!
+                            if(player1.getDistance() > 0){
+                                distance = player1.getDistance();
+                                soundPlayer(distance); //soundpool tracking beeps
+
+                                if (player1.getCheckAlienWin() != -1){ // check if game is over
+                                    Log.d("MYINT", "AlienGameWinnerIS: " + player1.getCheckAlienWin());
+                                    game1.setActive(false);
+                                    gameOverTextView.setVisibility(View.VISIBLE);
+                                }
+                            }
+
                         }
                     }//end run
                 });

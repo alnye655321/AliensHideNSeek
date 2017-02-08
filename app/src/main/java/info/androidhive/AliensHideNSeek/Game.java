@@ -39,8 +39,8 @@ public class Game {
         return this.id;
     }
 
-    public void setGameId(int id) {
-        this.id = id;
+    public void setGameId(int newId) {
+        this.id = newId;
     }
 
 }

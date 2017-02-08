@@ -20,40 +20,6 @@ public class Environment extends Game {
         return this.type;
     }
 
-    //get distance between stationary human and alien(s), should be
-    //running frequently in a game event loop. !!! In km !!!
-    public double getDistance(double humanLat, double humanLon, double alienLat, double alienLon) {
-
-        double d2r = Math.PI / 180;
-        double distance = 0;
-
-
-        double dlong = (alienLon - humanLon) * d2r;
-        double dlat = (alienLat - humanLat) * d2r;
-        double a =
-                Math.pow(Math.sin(dlat / 2.0), 2)
-                        + Math.cos(humanLat * d2r)
-                        * Math.cos(alienLat * d2r)
-                        * Math.pow(Math.sin(dlong / 2.0), 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = 6367 * c;
-        System.out.println(d);
-        return d;
-    }
-
-    //game over check if alien gets close enough (on top of) human --> game over
-    //should change this to meters, along with above distance func. !!! Currently .01 km !!!
-    public int gameWinnerCheck(int humanPlayerId, int alienPlayerId, double humanLat, double humanLon, double alienLat, double alienLon) {
-        int winner;
-        if(getDistance(humanLat, humanLon, alienLat, alienLon) < .015 ){
-            winner = alienPlayerId;
-            return winner;
-        }
-        else{
-            return -1;
-        }
-    }
-
     // figures out where to plot gps markers on the animated motion tracker bitmap
     public double[] plotGPSpoint(double humanLat, double humanLon, double alienLat, double alienLon, int bitmapRadiusX, int bitmapRadiusY){
         double[] xyPair = new double[2];
